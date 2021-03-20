@@ -9,14 +9,14 @@
 // concept Atom requires (A a) { a.time(); a.P() }
 
 //  time associated with an atom
-template<class Atom, class Time = double> // Atom::time_type
+template<class Atom, class Time = typename Atom::time_type> // Atom::time_type
 Time time(const Atom& a)
 {
 	return a.time();
 }
 
 // probability associated with an atom
-template<class Atom, class Time = double> // Atom::time_type
+template<class Atom>
 double P(const Atom& a)
 {
 	return a.P();
@@ -39,8 +39,9 @@ auto conditional_expectation(const StoppingTime& T, const StochasticProcess& X, 
 
 // random walk atoms
 class RW {
-public:
 	int k, n;
+public:
+	typedef int time_type;
 	// all paths with W_n = k
 	RW(int k, int n)
 		: k(k), n(n)
@@ -68,7 +69,9 @@ public:
 	// level
 	int operator()(int t) const
 	{
-		return t == n ? k : std::numeric_limits<int>::max();
+		assert(t == n);
+
+		return k;
 	}
 
 	RW& operator++()
@@ -109,20 +112,25 @@ public:
 		typedef std::forward_iterator_tag iterator_category;
 		typedef RW value_type;
 		RW lo, hi;
+		bool done;
 		Atoms(int l, int h, int n)
-			: lo(l, n), hi(h, n)
-		{ }
+			: lo(l, n), hi(h, n), done(false)
+		{ 
+			assert(n >= 0);
+			assert(l <= h);
+		}
 		bool operator==(const Atoms& a) const
 		{
 			return lo == a.lo and hi == a.hi;
 		}
-		bool operator!=(const Atoms& a_) const
+		bool operator!=(const Atoms& a) const
 		{
-			return !operator==(a_);
+			return !operator==(a);
 		}
+
 		explicit operator bool() const
 		{
-			return lo(time(lo)) <= hi(time(hi));
+			return !done;
 		}
 		value_type operator*() const
 		{
@@ -130,7 +138,12 @@ public:
 		}
 		Atoms& operator++()
 		{
-			++lo;
+			if (lo == hi) {
+				done = true;
+			}
+			else {
+				++lo;
+			}
 
 			return *this;
 		}
@@ -140,20 +153,69 @@ public:
 		int t = time(o);
 		assert(t <= T);
 
-		return Atoms(o(T) - T + t, o(T) + T - t, T);
+		return Atoms(o(t) - T + t, o(t) + T - t, T);
 	}
 };
 
-
 struct RandomWalk {
-	double operator()(const RW& a)
+	typedef RW atom_type;
+	double operator()(const atom_type& a) const
 	{
 		return a.P();
 	}
 };
 
+template<class Model>
+struct Stock {
+	double s, v;
+	Stock(double s, double v)
+		: s(s), v(v)
+	{ }
+	auto operator()(int t) const
+	{
+		return [*this,t](const typename Model::atom_type& o) {
+			return s * exp(v*o(t))/pow(cosh(v), t);
+		};
+	}
+};
+
+template<class Model>
+struct Put {
+	const Stock<Model>& S;
+	double k;
+	int t;
+	Put(const Stock<Model>& S, double k, int t)
+		: S(S), k(k), t(t)
+	{ }
+	auto operator()(int u) const
+	{
+		assert(u == t);
+		return[*this](const typename Model::atom_type& o) {
+			return std::max(k - S(t)(o), 0.);
+		};
+	}
+};
 
 int main()
 {
+	constexpr double eps = std::numeric_limits<double>::epsilon();
+	ConstantStoppingTime T(3);
+	Stock<RandomWalk> S(100, 0.1);
+	RandomWalk W;
+
+	{
+		auto E = conditional_expectation(T, S, W);
+		double E0 = E(RW(0, 0));
+		assert(fabs(E0 - 100) <= 200 * eps);
+		//E0 = E(RW(-3, 3));
+		//assert(E(RW(-3, 3)) == S(3)(RW(-3, 3)));
+	}
+	{
+		Put P(S, 100, 3);
+		auto E = conditional_expectation(T, P, W);
+		double E0 = E(RW(0, 0));
+		assert(fabs(E0 - 7.450) < .001);
+	}
+
 	return 0;
 }
