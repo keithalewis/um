@@ -6,7 +6,7 @@
 #include <tuple>
 
 
-// concept Atom requires (A a) { a.time(); a.P() }
+// concept Atom requires (A a) { a.time(); a.prob(); }
 
 //  time associated with an atom
 template<class Atom, class Time = typename Atom::time_type> // Atom::time_type
@@ -17,20 +17,24 @@ Time time(const Atom& a)
 
 // probability associated with an atom
 template<class Atom>
-double P(const Atom& a)
+double prob(const Atom& a)
 {
-	return a.P();
+	return a.prob();
 }
+
+// a stopping time T:Omega -> time is a collection of atoms of Omega
+// with T(omega) = time(omega)
+// atom A: B\subset A and time(B) = time(A) implies B = A or B empty
 
 // E[X_T](omega)
 template<class StoppingTime, class StochasticProcess, class Measure>
-auto conditional_expectation(const StoppingTime& T, const StochasticProcess& X, const Measure& P)
+auto expected_value(const StoppingTime& T, const StochasticProcess& X, const Measure& P)
 {
 	return [&T, &X, &P](const auto& omega) {
 		double E = 0;
 
 		for (auto o = T(omega); o; ++o) {
-			E += X(time(*o))(*o) * P(*o);	
+			E += X(time(*o))(*o) * prob(*o);	
 		}
 
 		return E;
@@ -84,7 +88,7 @@ public:
 	}
 
 	// C(n, k)/2^n
-	double P() const
+	double prob() const
 	{
 		double p = 1;
 		int k_ = (n + k)/2;
@@ -161,7 +165,7 @@ struct RandomWalk {
 	typedef RW atom_type;
 	double operator()(const atom_type& a) const
 	{
-		return a.P();
+		return a.prob();
 	}
 };
 
@@ -204,15 +208,16 @@ int main()
 	RandomWalk W;
 
 	{
-		auto E = conditional_expectation(T, S, W);
+		auto E = expected_value(T, S, W);
 		double E0 = E(RW(0, 0));
 		assert(fabs(E0 - 100) <= 200 * eps);
 		//E0 = E(RW(-3, 3));
 		//assert(E(RW(-3, 3)) == S(3)(RW(-3, 3)));
 	}
 	{
-		Put P(S, 100, 3);
-		auto E = conditional_expectation(T, P, W);
+		int t = 3;
+		Put P(S, 100, t);
+		auto E = expected_value(ConstantStoppingTime(t), P, W);
 		double E0 = E(RW(0, 0));
 		assert(fabs(E0 - 7.450) < .001);
 	}
