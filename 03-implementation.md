@@ -10,11 +10,15 @@ $ω$ itself.
 The coarsest partition $\{Ω\}$ represents no information. The finest
 partition $\{\{ω\}:ω\in Ω\}$ represents complete information.
 
+A partition $\mathcal{B}$ is a _refinement_ of $\mathcal{A}$ if every
+$B\in\mathcal{B}$ is a subset of some $A\in\mathcal{A}$.
+Define $\mathcal{A}\preceq \mathcal{B}$ iff $\mathcal{B}$ is a refinement of $\mathcal{A}$.
+
 ## Algebra
 
 An _algebra_ $\mathcal{A}^*$ on a set $Ω$ is a collection of subsets of $Ω$
 closed under complement and union that contains the empty set.
-This implies $Ω$ belongs to the algebra and that it is closed
+This implies $Ω$ belongs to the algebra and that it is also closed
 under intersection by De Morgan's laws.
 
 An _atom_ of $\mathcal{A}^*$ is a set $A\in\mathcal{A}^*$ with the property
@@ -23,14 +27,16 @@ $B\subseteq A$ and $B\in\mathcal{A}^*$ imply $B = A$ or $B$ is the empty set.
 The atoms of a finite algebra of sets on $Ω$ form a partition of $Ω$
 and the algebra is the smallest algebra of sets containing the atoms.
 
-It is simpler to work with partition than with algebras and they are
+It is simpler to work with partitions than with algebras and they are
 equivalent in the finite case.
 
-## Filtered
+## Filtration
 
-A collection of sets _filtered_ by $T$ is a set $\mathcal{A}_T$ of subsets of $Ω$
-and a function $τ:\mathcal{A}_T\to T$ with $τ^{-1}(t) = \{A\in\mathcal{A}_T:τ(A) = t\}$
-a partition of $Ω$ for $t\in T$. We write $\mathcal{A}_t$ for $τ^{-1}(t)$.
+A _filtration_ on a totally ordered set $T$ is a collection of partitions $\mathcal{A}_t$, $t\in T$,
+where $\mathcal{A}_t$ is coarser then $\mathcal{A}_u$ if $t < u$.
+
+A _stopping time_ is a function $τ\colon Ω\to T$ such that
+$\{ω\in Ω\mid τ(ω) = t\}$ is a union of atoms of $\mathcal{A}_t$.
 
 A partition $\mathcal{B}$ is a _refinement_ of $\mathcal{A}$ if every
 $B\in\mathcal{B}$ is a subset of some $A\in\mathcal{A}$.
