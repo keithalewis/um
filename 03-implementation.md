@@ -1,3 +1,4 @@
+\newcommand
 # Implementation
 
 ## Partition
@@ -6,13 +7,14 @@ A _partition_ $\mathcal{A}$ of a set $Ω$ is a collection of disjoint subsets
 of $Ω$ with union $Ω$. Partitions represent partial information:
 we only know what element of the partition $ω\in Ω$ belongs to, not
 $ω$ itself.
-
 The coarsest partition $\{Ω\}$ represents no information. The finest
 partition $\{\{ω\}:ω\in Ω\}$ represents complete information.
 
-A partition $\mathcal{B}$ is a _refinement_ of $\mathcal{A}$ if every
+A partition are partially ordered by _refinement_:
+$\mathcal{B}$ is a refinement of $\mathcal{A}$ if every
 $B\in\mathcal{B}$ is a subset of some $A\in\mathcal{A}$.
 Define $\mathcal{A}\preceq \mathcal{B}$ iff $\mathcal{B}$ is a refinement of $\mathcal{A}$.
+We say $\
 
 ## Algebra
 
