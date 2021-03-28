@@ -14,7 +14,7 @@ A partition are partially ordered by _refinement_:
 $\mathcal{B}$ is a refinement of $\mathcal{A}$ if every
 $B\in\mathcal{B}$ is a subset of some $A\in\mathcal{A}$.
 Define $\mathcal{A}\preceq \mathcal{B}$ iff $\mathcal{B}$ is a refinement of $\mathcal{A}$.
-We say $\
+We write $A|\mathcal{B}$ for the atoms in $\mathcal{B}$ contained in $A\in\mathcal{A}$.
 
 ## Algebra
 
@@ -75,3 +75,10 @@ auto value(A, D)
 }
 ```
 
+$f\colon T\times R\to R$. $F(ω) = f(time(ω), ω(time(ω)))$.
+
+Write example the works for both binomial and trinomial trees.
+
+$atoms(ω,A)$ is a sequence of atoms
+
+$E(X,P) = \sum \{ X(α) P(α) \mid α\in ω\}$.
