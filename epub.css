@@ -1,5 +1,11 @@
 /* This defines styles and classes used in the book */
-body { margin: 5%; text-align: justify; font-size: medium; }
+body { margin: 5%; text-align: justify; font-size: medium;
+	/*font-family: 'Times New Roman', 'Calisto', 'Cambria', "Segoe UI", Georgia, serif;*/
+	font-family: 'Cambria', "Segoe UI", Georgia, serif;
+    font-size: 110%;
+    font-weight: 500;
+    line-height: 120%;
+}
 code { font-family: monospace; }
 h1 { text-align: left; }
 h2 { text-align: left; }
@@ -23,4 +29,4 @@ span.underline{ text-decoration: underline; }
 q { quotes: "“" "”" "‘" "’"; }
 div.column{ display: inline-block; vertical-align: top; width: 50%; }
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-
+.katex { font-size: 95% !important; }
