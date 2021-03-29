@@ -74,49 +74,33 @@ Net amount of instruments held by an entity.
 
 # Mathematics
 
-Manipulating propositions.
+Math involves manipulating _propositions_, statements that are either true or false.
+Propositions can be combined using _logical connectives_,
+_not_ ($\neg$), _and_ ($\wedge$), _or_ ($\vee$), and _implies_ ($\implies$).
+An _axiom_ (for a given mathematical system) is a proposition that is assumed to be true.
+A _proof_ of '$A$ implies $B$' assumes $A$ is true and deduces $B$ using axioms and rules of inference.
+The rule of inference _modus ponens_ states if $P$ and $P\implies Q$ then $Q$.
 
-A _proposition_ is a statement that is either true or false
-
-## Logic
-
-An _axiom_ is proposition that is assumed to be true
-
-A _rule of inference_ is a recipe for creating true statements
-
-A _proof_ of $A$ implies $Z$ assumes $A$ is true and deduces $Z$ using axioms and rules of inference.
-
-A _derivation_ demonstrates $A = Z$ using _substitution_ and _evaluation_.
+An _expression_ is a well-formed formula from a set of symbols and rules.
+A _derivation_ demonstrates equality of expressions using _substitution_ and _evaluation_.
 
 ### Propositional Calculus
 
-The _logical connectives_ of the propostional calculus are
-_not_ ($\neg$), _and_ ($\wedge$), _or_ ($\vee$), and _implies_ ($\implies$).
-
-Axioms: If $P,Q,R$ are propositions then
-$$
-P\implies P,
-$$
-$$
-P\implies(Q\implies P),
-$$
-$$
-(P\implies(Q\implies R))\implies((P\implies Q)\implies(P\implies R)),
-$$
-and optionally
-$$
-(\neg P\implies\neg Q)\implies(Q\implies P).
-$$
-if the law of the excluded middle holds.
-
-The rule of inference _modus ponens_ states if $P\implies Q$ and $P$ then $Q$.
-Every tautology can be proved from these axioms.
+A (well-formed) proposition is an expression involving (propositional) variables or any
+combinations of expressions built from logical connectives.
+A tautology is an expression that is true for all values of the variables it involves.
+Every tautology can be proved using the axioms
+$P\implies P$,
+$P\implies(Q\implies P)$,
+and $(P\implies(Q\implies R))\implies((P\implies Q)\implies(P\implies R))$
+using modus ponens.
 
 ### First Order Logic
 
-_quantification_: for all, there exists
-
-### 
+If a proposition $P(x)$ is parameterized over a (symbolic) variable
+then $\forall x\,P(x)$ indicates the parameterized proposition is true
+for all values represented by $x$ and $\exists x\,P(x)$ indicates there
+is at least one value for $x$ making the proposition true.
 
 ## Set
 
