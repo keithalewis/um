@@ -1,4 +1,8 @@
 // CPPFLAGS = -g -Wall -std=c++17
+// An _algebra_ of sets on S is determined by a partition of S.
+// A _model_ implements a martingale indexed by time T.
+// It provides the collection atoms at time t contained in a given atom at time s <= t.
+// If s = 0 then all atoms at time t are generated.
 #include <cassert>
 #include <cmath>
 #include <functional>
@@ -11,11 +15,17 @@
 
 class Binomial {
 public:
+	typedef double prob_type;
+	typedef int time_type;
+	// E[e^{sX}]
+	double kappa(double s) const
+	{
+		return cosh(s);
+	}
 	class Atom {
 		int n, k; // W_n = k
 	public:
 		typedef int time_type;
-		typedef double prob_type;
 		Atom(int n, int k)
 			: n(n), k(k)
 		{
@@ -36,34 +46,165 @@ public:
 
 			return k;
 		}
-		int time() const
+		time_type time() const
 		{
 			return n;
 		}
-		prob_type prob() const
-		{
-			prob_type p = 1;
-			int k_ = (n + k) / 2;
-
-			if (k_ > n / 2) {
-				k_ = n - k_;
-			}
-			for (int i = 0; i < k_; ++i) {
-				// p /= 2;
-				p *= n - i;
-				p /= i + 1;
-			}
-
-			return ldexp(p, -n /* + k_*/);
-		}
 	};
+	// P(W_n = k) = P(W_{n-1) == k + 1, X_n = -1) + P(W_{n-1} = k - 1, X_n = 1)
+	static prob_type prob(const Binomial::Atom& o)
+	{
+		auto t = o.time();
+		if (t == 0) {
+			return 1;
+		}
+
+		auto w = o(t);
+		using atom = Binomial::Atom;
+		auto p_ = w == t ? 0 : prob(atom(t - 1, w + 1));
+		auto _p = w == -t ? 0 : prob(atom(t - 1, w - 1));
+
+		return p_/2 + _p/2;
+		
+
+//		prob_type p = 1;
+//		int k_ = (n + k) / 2;
+//
+//		if (k_ > n / 2) {
+//			k_ = n - k_;
+//		}
+//		for (int i = 0; i < k_; ++i) {
+//			// p /= 2;
+//			p *= n - i;
+//			p /= i + 1;
+//		}
+//
+//		return ldexp(p, -n /* + k_*/);
+
+	}
 };
+
+inline Binomial::prob_type prob(const Binomial::Atom& o)
+{
+	return Binomial::prob(o);
+}
+
+int test_binomial()
+{
+	{
+		Binomial::Atom o(0,0);
+		assert(prob(o) == 1);
+	}
+	{
+		Binomial::Atom o(1,1);
+		assert(prob(o) == 0.5);
+	}
+	{
+		Binomial::Atom o(1,-1);
+		assert(prob(o) == 0.5);
+	}
+	{
+		using atom = Binomial::Atom;
+
+		assert(prob(atom(2,2)) == 0.25);
+		assert(prob(atom(2,0)) == 0.5);
+		assert(prob(atom(2,-2)) == 0.25);
+	}
+
+	return 0;
+}
+int test_binomial_ = test_binomial();
 
 template<class T>
 inline T Time(const Binomial::Atom& a)
 {
 	return static_cast<T>(a.time());
 }
+
+// X_i = -1, 0, x; P(X_i = +-1) = p, P(X_i = 0) = 1 - 2p
+// Var(X_i) = E[X_i^2] = 2p, 0 <= p <= 1/2; p = 1/2 is binomial
+// V_t = aW_{t/b}, Var(V_t) = a^2 2p t/b = t if 2p a^2/b = 1.
+// b = dt, a = sqrt(dt/2p)
+class Trinomial {
+	typedef int time_type;
+	typedef double prob_type;
+
+	prob_type p;
+public:
+	Trinomial(prob_type p)
+		: p(p)
+	{
+		assert(0 <= p and p <= 0.5);
+	}
+	// E[e^{sX}]
+	double kappa(double s) const
+	{
+		return 1 - 2p + 2*p*cosh(s);
+	}
+	class Atom {
+		int n, k; // W_n = k
+	public:
+		Atom(int n, int k)
+			: n(n), k(k)
+		{
+			assert(n >= 0);
+			assert(-n <= k);
+			assert(k <= n);
+		}
+		// level
+		int operator()(int t) const
+		{
+			assert(t == n);
+
+			return k;
+		}
+		time_type time() const
+		{
+			return n;
+		}
+	};
+	prob_type prob(const Trinomial::Atom& o) const
+	{
+		auto t = o.time();
+
+		if (t == 0) {
+			return 1;
+		}
+
+		auto w = o(t);
+		using atom = Trinomial::Atom;
+		auto p_ = w == t ? 0 : prob(atom(t - 1, w + 1));
+		auto _p_ = prob(atom(t - 1, w));
+		auto _p = w == -t ? 0 : prob(atom(t - 1, w - 1));
+
+		return p_*p + _p_*(1 - 2*p) + p*_p;
+	}
+};
+int test_trinomial()
+{
+	{
+		Trinomial::Atom o(0,0);
+		assert(prob(o) == 1);
+	}
+	{
+		Trinomial::Atom o(1,1);
+		assert(prob(o) == 0.5);
+	}
+	{
+		Trinomial::Atom o(1,-1);
+		assert(prob(o) == 0.5);
+	}
+	{
+		using atom = Trinomial::Atom;
+
+		assert(prob(atom(2,2)) == 0.25);
+		assert(prob(atom(2,0)) == 0.5);
+		assert(prob(atom(2,-2)) == 0.25);
+	}
+
+	return 0;
+}
+int test_trinomial = test_trinomial();
 
 class Bond {
 	double r; // continuously compounded rate
@@ -104,8 +245,8 @@ public:
 	template<class Time>
 	auto operator()(Time t) const
 	{
-		return [*this, t](const auto& omega) {
-			return s * exp(v*omega(t) - v*v*t/2);
+		return [*this, t](const auto& omega, const auto& kappa) {
+			return s * exp(v*omega(t) - t*kappa(v));
 		};
 	}
 };
