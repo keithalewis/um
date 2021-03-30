@@ -9,8 +9,64 @@
 //typedef double Time;
 //using Omega = std::function<double(Time)>; // sample path
 
+class Binomial {
+public:
+	class Atom {
+		int n, k; // W_n = k
+	public:
+		typedef int time_type;
+		typedef double prob_type;
+		Atom(int n, int k)
+			: n(n), k(k)
+		{
+			assert(n >= 0);
+			assert(-n <= k);
+			assert(k <= n);
+			assert((n - k) % 2 == 0);
+		}
+		Atom(const Atom&) = default;
+		Atom& operator=(const Atom&) = default;
+		~Atom()
+		{ }
+
+		// level
+		int operator()(int t) const
+		{
+			assert(t == n);
+
+			return k;
+		}
+		int time() const
+		{
+			return n;
+		}
+		prob_type prob() const
+		{
+			prob_type p = 1;
+			int k_ = (n + k) / 2;
+
+			if (k_ > n / 2) {
+				k_ = n - k_;
+			}
+			for (int i = 0; i < k_; ++i) {
+				// p /= 2;
+				p *= n - i;
+				p /= i + 1;
+			}
+
+			return ldexp(p, -n /* + k_*/);
+		}
+	};
+};
+
+template<class T>
+inline T Time(const Binomial::Atom& a)
+{
+	return static_cast<T>(a.time());
+}
+
 class Bond {
-	double r; // continuosly compounded rate
+	double r; // continuously compounded rate
 public:
 	Bond(double r)
 		: r(r)
