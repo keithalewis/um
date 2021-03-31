@@ -1,8 +1,11 @@
 // CPPFLAGS = -g -Wall -std=c++17
-// An _algebra_ of sets on S is determined by a partition of S.
+// An _algebra_ of sets on S is determined by a partition of S into _atoms_
+// Random variable and measure are functions on atoms.
 // A _model_ implements a martingale indexed by time T.
-// It provides the collection atoms at time t contained in a given atom at time s <= t.
-// If s = 0 then all atoms at time t are generated.
+// A stopping time tau(o) -> atoms containing atom o at the stopping time
+// X(tau) = {(t, X(o)) : o in tau, t = time(o) }
+// value(X, P)(o) = sum X(tau) * P(tau) ???
+// Derivative: tau_0 < tau_1, ...; paying A(tau_0), A(tau_1), ...
 #include <cassert>
 #include <cmath>
 #include <functional>
@@ -17,10 +20,10 @@ class Binomial {
 public:
 	typedef double prob_type;
 	typedef int time_type;
-	// E[e^{sX}]
+	// log E[e^{sX}]
 	double kappa(double s) const
 	{
-		return cosh(s);
+		return log(cosh(s));
 	}
 	class Atom {
 		int n, k; // W_n = k
@@ -50,6 +53,13 @@ public:
 		{
 			return n;
 		}
+		// all atoms at time tau > t containing atom
+		// where tau is a stopping time
+		/*
+		auto atoms(auto tau)
+		{
+		}
+		*/
 	};
 	// P(W_n = k) = P(W_{n-1) == k + 1, X_n = -1) + P(W_{n-1} = k - 1, X_n = 1)
 	static prob_type prob(const Binomial::Atom& o)
