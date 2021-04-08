@@ -23,6 +23,8 @@ _Use coroutines to leverage multicore chips._
 
 Multicore CPUs are the future of computing. Threading is too complicated.
 
+Generator. Producer/Consumer.
+
 ## Finance
 
 Market _instruments_ have _prices_ and _cash flows_.
