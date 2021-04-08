@@ -4,36 +4,55 @@ Some aspects of the financial world can be modeled using mathematics,
 but ultimatley the people writing the checks need that implemented on
 a computer to produce numbers they find useful for running their business.
 
-## Desirata
-
+## Desiderata
 
 _Prefer functions to objects._
 
-Functions have no side effects and only return a result.  This enables
+Functions have no side effects and only return a result.
+This enables
 compilers to generate efficient code since they have no side
-effects that might mutate data.  Functions, by definition, are composable.
-You know exactly what they are doing by looking at the code
+effects that might mutate data.  Functions, by definition, are composable
+and make refactoring simpler.
+You know exactly what a functions does by looking at the code.
 
 Objects have data and methods, functions that can use and change object data.
 They map more closely to natural language usage when writing code.
 Object inheritance can reduce the amount of code by implementing common operations.
+Objects are difficult to design well and impede refactoring.
 
 _Prefer streams to memory allocation._
 
 Streams produce data on demand and don't care where it comes from.
 They generalize in-memory arrays that are only accessed sequentially.
 This allows for potentially infinite streams and generators that
-can leverage multicore CPUs.
+run asynchronously.
 
-_Use coroutines._
+_Use coroutines for asynchronous code execution._
 
 A coroutine is a function with a bookmark. Functions execute statements
 and return a value. Coroutines execute statements that can yield a value
 and set a bookmark. The next call to the coroutine resumes execution
 from the bookmark until the next yield or a return that terminates
-the coroutine.
+the coroutine. They are the easiest way to implement cooperative multi-tasking.
 
-Generator. Producer/Consumer.
+## Library
+
+Special functions.
+
+Root finding.
+
+Automatic differentiation.
+
+European option pricing.
+
+Curve bootstrapping.
+
+Deflator. $D_t = \exp(-\int_0^t f(s)\,ds)$,
+zero coupon bond $D_t(u) = E_t[D_u]/D_t = E_t[\exp(-\int_t^u f(s)\,ds)] = \exp(-\int_t^u f_t(s)\,ds)$.
+
+Generic value function $V_t = E_t[\sum_{u>t} A_u D_u]/D_t$.
+Sample space is a set $Ω$. Partial information is represented by a partition of $Ω$. Elements of
+the partition are atoms. Everything is a function time and atoms.
 
 ## Finance
 
