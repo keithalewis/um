@@ -2,6 +2,27 @@
 
 A framework for specifying implementations of financial models.
 
+## Desirata
+
+_Prefer functions to objects._
+
+Functions have no side effects and only return a result.  This enables
+compilers to generate efficient code since they have no side
+effects that might mutate data.  Functions, by definition, are composable.
+You know exactly what they are doing by looking at the code
+
+Objects have data and methods, functions that can use and change object data.
+They map more closely to natural language usage when writing code.
+Object inheritance can reduce the amount of code by implementing common operations.
+
+_Prefer streams to memory allocation._
+
+Streams produce data on demand and don't care where it comes from. ...multicore...
+
+_Use coroutines to leverage multicore chips._
+
+Multicore CPUs are the future of computing. Threading is too complicated.
+
 ## Finance
 
 Market _instruments_ have _prices_ and _cash flows_.
