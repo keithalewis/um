@@ -1,8 +1,11 @@
 # PolyFin
 
-A framework for specifying implementations of financial models.
+Some aspects of the financial world can be modeled using mathematics,
+but ultimatley the people writing the checks need that implemented on
+a computer to produce numbers they find useful for running their business.
 
 ## Desirata
+
 
 _Prefer functions to objects._
 
@@ -17,11 +20,18 @@ Object inheritance can reduce the amount of code by implementing common operatio
 
 _Prefer streams to memory allocation._
 
-Streams produce data on demand and don't care where it comes from. ...multicore...
+Streams produce data on demand and don't care where it comes from.
+They generalize in-memory arrays that are only accessed sequentially.
+This allows for potentially infinite streams and generators that
+can leverage multicore CPUs.
 
-_Use coroutines to leverage multicore chips._
+_Use coroutines._
 
-Multicore CPUs are the future of computing. Threading is too complicated.
+A coroutine is a function with a bookmark. Functions execute statements
+and return a value. Coroutines execute statements that can yield a value
+and set a bookmark. The next call to the coroutine resumes execution
+from the bookmark until the next yield or a return that terminates
+the coroutine.
 
 ## Finance
 
