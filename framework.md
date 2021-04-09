@@ -154,3 +154,22 @@ Examples of usage in a pseudo language:
 	v = value(p, S, M)(t0, ω0) 
 
 ```
+
+Coding conventions
+
+```
+    namespace xyz {
+    	class C {
+	public:
+
+	    static const char* doc = R"()";
+	    C()
+	    { }
+
+	    static const char* foo_doc = R"()";
+	    int foo(int)
+	    {
+	    }
+	};
+    }
+```
