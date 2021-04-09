@@ -5,6 +5,9 @@
 #include <cstddef>
 #include <initializer_list>
 
+// (a0 + a1 + ...)^k = sum_{i0, i1, ...} a_i0 a_i1 ...
+// (x0 + x1 e + x2 e^2/2! + ...)^k
+
 // x e^k
 template<size_t N, class X = double>
 class epsilon {
