@@ -4,6 +4,26 @@ Some aspects of the financial world can be modeled using mathematics,
 but ultimatley the people writing the checks need that implemented on
 a computer to produce numbers they find useful for running their business.
 
+## Library
+
+Special functions. normal, logistic, Gamma, ...
+
+Root finding. HP SOLVE function
+
+Automatic differentiation.
+
+European option pricing.
+
+Curve bootstrapping.
+
+Deflator. $D_t = \exp(-\int_0^t f(s)\,ds)$,
+zero coupon bond $D_t(u) = E_t[D_u]/D_t = E_t[\exp(-\int_t^u f(s)\,ds)] = \exp(-\int_t^u f_t(s)\,ds)$.
+
+Generic value function $V_t = E_t[\sum_{u>t} A_u D_u]/D_t$.
+Sample space is a set $Ω$. Partial information is represented by a partition of $Ω$. Elements of
+the partition are atoms. Everything is a function time and atoms.
+
+
 ## Desiderata
 
 _Prefer functions to objects._
@@ -33,26 +53,7 @@ A coroutine is a function with a bookmark. Functions execute statements
 and return a value. Coroutines execute statements that can yield a value
 and set a bookmark. The next call to the coroutine resumes execution
 from the bookmark until the next yield or a return that terminates
-the coroutine. They are the easiest way to implement cooperative multi-tasking.
-
-## Library
-
-Special functions.
-
-Root finding.
-
-Automatic differentiation.
-
-European option pricing.
-
-Curve bootstrapping.
-
-Deflator. $D_t = \exp(-\int_0^t f(s)\,ds)$,
-zero coupon bond $D_t(u) = E_t[D_u]/D_t = E_t[\exp(-\int_t^u f(s)\,ds)] = \exp(-\int_t^u f_t(s)\,ds)$.
-
-Generic value function $V_t = E_t[\sum_{u>t} A_u D_u]/D_t$.
-Sample space is a set $Ω$. Partial information is represented by a partition of $Ω$. Elements of
-the partition are atoms. Everything is a function time and atoms.
+the coroutine. They are the simplest way to implement cooperative multi-tasking.
 
 ## Finance
 
