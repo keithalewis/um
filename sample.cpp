@@ -15,7 +15,7 @@ struct Normal {
 		return x*s+n;
 	}
 	// cumulant generating function
-	// log E[exp(s X)]
+	// D_s^ log E[exp(s X)]
 	double cgf(double s, size_t n = 0)
 	{
 		if (n == 0) {

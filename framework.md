@@ -1,7 +1,7 @@
 # PolyFin
 
 Some aspects of the financial world can be modeled using mathematics,
-but ultimatley the people writing the checks need that implemented on
+but ultimatley the writing the checks need that implemented on
 a computer to produce numbers they find useful for running their business.
 
 ## Library
