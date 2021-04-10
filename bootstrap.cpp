@@ -9,14 +9,35 @@
 template<class I, class P>
 class sequence {
 	I b;
-	const I& e;
-	const P& p;
+	I e;
+	P p;
 public:
-	using value_type = decltype(b);
+	using value_type = I;
 
 	sequence(const I& b, const I& e, const P& p)
 		: b(b), e(e), p(p)
 	{ }
+	~sequence()
+	{ }
+
+	bool operator==(const sequence& s) const
+	{
+		return b == s.b and e == s.e and p == s.p;
+	}
+	bool operator!=(const sequence& s) const
+	{
+		return !operator==(s);
+	}
+
+	sequence begin() const
+	{
+		return *this;
+	}
+	sequence end() const
+	{
+		return sequence(e + p, e + p, p);
+	}
+
 	explicit operator bool()
 	{
 		return b <= e;
@@ -27,11 +48,21 @@ public:
 	}
 	sequence& operator++()
 	{
-		if (b < e) {
+		if (b <= e) {
 			b += p;
+		}
+		else {
+			b = e = e + p;
 		}
 
 		return *this;
+	}
+	sequence operator++(int)
+	{
+		sequence tmp{*this};
+		operator++();
+
+		return tmp;
 	}
 };
 
@@ -40,27 +71,42 @@ using namespace std::chrono;
 int test_sequence()
 {
 	{
-		auto b = system_clock::now();
-		auto e = b + 2h;
-		sequence i(b, e, 10min);
-		while (i) {
-			std::cout << system_clock::to_time_t(*i) << std::endl;
+		int b = 0;
+		int e = 5;
+		sequence s(b, e, 1);
+		int i = b;
+		while (s) {
+			assert(i == *s);
 			++i;
+			++s;
 		}
+		assert(i == e + 1);
+	}
+	{
+		int b = 0;
+		int e = 5;
+		sequence s(b, e, 1);
+		int i = b;
+		while (s) {
+			assert(i == *s);
+			i++;
+			s++;
+		}
+		assert(i == e + 1);
 	}
 
 	return 0;
 }
 int test_sequence_ = test_sequence();
 
-// f(x) = x[0], t <= t[0], f(x) = x[i], t[i-1] < t <= t[i]
+// f(t) = x[i], t[i-1] < t <= t[i]
 template<class T, class X>
 class pwflat {
 	size_t n;
 	const T* t;
 	const X* x;
 public:
-	//using iterator_category = typename ...
+	using iterator_category = std::input_iterator_tag;
 	using value_type = std::pair<T,X>;
 
 	/*
@@ -73,6 +119,29 @@ public:
 	pwflat(size_t n = 0, const T* t = nullptr, const X* x = nullptr)
 		: n(n), t(t), x(x)
 	{ }
+	pwflat(const pwflat&) = default;
+	pwflat& operator=(const pwflat&) = default;
+	~pwflat()
+	{ }
+
+	bool operator==(const pwflat& f) const
+	{
+		return n == f.n and t == f.t and x == f.x;
+	}
+	bool operator!=(const pwflat& f) const
+	{
+		return !operator==(f);
+	}
+
+	pwflat begin() const
+	{
+		return *this;
+	}
+	pwflat end() const
+	{
+		return pwflat{};
+	}
+
 	explicit operator bool() const
 	{
 		return n != 0;
@@ -88,8 +157,60 @@ public:
 			++t;
 			++x;
 		}
+		else {
+			t = nullptr;
+			x = nullptr;
+		}
+
+		return *this;
+	}
+	pwflat operator++(int)
+	{
+		pwflat tmp{*this};
+		operator++();
+
+		return tmp;
 	}
 };
+int test_pwflat()
+{
+	{
+		int t[] = {1,2,3};
+		double x[] = {.1,.2,.3};
+		pwflat f(3, t, x);
+		assert(f);
+		pwflat f2{f};
+		assert(f2 == f);
+		f = f2;
+		assert(!(f != f2));
+
+		int i = 0;
+		{
+			assert(f);
+			auto [ti, xi] = *f;
+			assert(ti == t[i] and xi == x[i]);
+		}
+		++i;
+		++f;
+		{
+			assert(f);
+			auto [ti, xi] = *f;
+			assert(ti == t[i] and xi == x[i]);
+		}
+		++i;
+		++f;
+		{
+			assert(f);
+			auto [ti, xi] = *f;
+			assert(ti == t[i] and xi == x[i]);
+		}
+		++f;
+		assert(!f);
+	}
+
+	return 0;
+}
+int test_pwflat_ = test_pwflat();
 
 template<class F, class T, class X>
 inline X value(F& f, const T& t, const X& _x = std::numeric_limits<X>::quiet_NaN())
@@ -139,7 +260,7 @@ inline X spot(const F& f, const T& t)
 	return t <= s ? x : integrate(f, t)/t;
 }
 
-// present value of cash flows up to _u
+// present value of cash flows up to _u and discount to last cash flow
 template<class F, class I, class T, class X>
 inline std::pair<X,X> present_value(F& f, I& i, const T& _u = std::numeric_limits<T>::infinity())
 {
@@ -158,7 +279,7 @@ inline std::pair<X,X> present_value(F& f, I& i, const T& _u = std::numeric_limit
 		++i;
 	}
 
-	return [pv, D];
+	return std::pair(pv, D);
 }
 
 /*
