@@ -1,28 +1,32 @@
 # PolyFin
 
 Some aspects of the financial world can be modeled using mathematics,
-but ultimatley the writing the checks need that implemented on
+but ultimatley the people writing the checks need that implemented on
 a computer to produce numbers they find useful for running their business.
 
 ## Library
 
-Special functions. normal, logistic, Gamma, ...
+Distrbutions. normal, logistic, Gamma, ...
 
-Root finding. HP SOLVE function
+Root finding.
 
-Automatic differentiation.
+AD. Automatic differentiation using ε.
 
-European option pricing.
+European option pricing. $E[\max\{k - F,0}] = kP(F\le k) - f P_s(F\le k)$, $dP_s/dP = \exp(s X - κ(s))$.
 
-Curve bootstrapping.
+Bootstrap. Use piecewise flat forward curve.
 
-Deflator. $D_t = \exp(-\int_0^t f(s)\,ds)$,
-zero coupon bond $D_t(u) = E_t[D_u]/D_t = E_t[\exp(-\int_t^u f(s)\,ds)] = \exp(-\int_t^u f_t(s)\,ds)$.
+Binomial Model.
 
-Generic value function $V_t = E_t[\sum_{u>t} A_u D_u]/D_t$.
-Sample space is a set $Ω$. Partial information is represented by a partition of $Ω$. Elements of
-the partition are atoms. Everything is a function time and atoms.
+Deflator. $D_t = \exp(-\int_0^t f(s)\,ds)$, where $f(t)$ is the stochastic instantaneous forward rate.
 
+Zero. $D_t(u) = E_t[D_u]/D_t = E_t[\exp(-\int_t^u f(s)\,ds)] = \exp(-\int_t^u f_t(s)\,ds)$.
+
+Valuation. $V_t = E_t[\sum_{τ_j>t} A_j D_{τ_j}]/D_t$.
+
+Trinomial Model.
+
+Fixed Income.
 
 ## Desiderata
 
@@ -54,6 +58,13 @@ and return a value. Coroutines execute statements that can yield a value
 and set a bookmark. The next call to the coroutine resumes execution
 from the bookmark until the next yield or a return that terminates
 the coroutine. They are the simplest way to implement cooperative multi-tasking.
+
+Implement core in C++. Provide interfaces to other languages.  
+.Net. [C++/CLI](https://docs.microsoft.com/en-us/cpp/dotnet/dotnet-programming-with-cpp-cli-visual-cpp)  
+Python. [CFFI](https://cffi.readthedocs.io/en/latest/),
+[Cython](https://cython.org/),
+[SIP](https://www.riverbankcomputing.com/software/sip/intro).  
+Javascript. [Emscripten](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Emscripten)
 
 ## Finance
 

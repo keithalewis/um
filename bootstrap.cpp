@@ -411,51 +411,38 @@ public:
 };
 
 // f(t) = x[i], t[i-1] < t <= t[i]
-template<class T, class X>
+template<iterable T, iterable X, class _T = typename T::value_type, class _X = typename X::value_type>
 class pwflat {
-	size_t n;
-	const T* t;
-	const X* x;
+	T t;
+	X x;
+	_X _x; // extrapolate
+	//static inline constexpr _X NaN = std::numeric_limits<_X>::quiet_NaN();
 public:
 	using iterator_category = std::input_iterator_tag;
-	using value_type = std::pair<T,X>;
+	using value_type = std::pair<_T, _X>;
 
-	/*
-	pwflat(const X x0)
-		: n(1), t(&inf), x0(x0)
-	{
-		x = &x0;
-	}
-	*/
-	pwflat(size_t n = 0, const T* t = nullptr, const X* x = nullptr)
-		: n(n), t(t), x(x)
+	pwflat(const T& t, const X& x, const _X& _x = std::numeric_limits<_X>::quiet_NaN())
+		: t(t), x(x), _x(_x)
 	{ }
 	pwflat(const pwflat&) = default;
 	pwflat& operator=(const pwflat&) = default;
 	~pwflat()
 	{ }
 
-	bool operator==(const pwflat& f) const
-	{
-		return n == f.n and t == f.t and x == f.x;
-	}
-	bool operator!=(const pwflat& f) const
-	{
-		return !operator==(f);
-	}
+	auto operator<=>(const pwflat& f) const = default;
 
 	pwflat begin() const
 	{
-		return *this;
+		return pwflat(t.begin(), x.begin());
 	}
 	pwflat end() const
 	{
-		return pwflat{};
+		return pwflat(t.end(), x.end());
 	}
 
 	explicit operator bool() const
 	{
-		return n != 0;
+		return t and x;
 	}
 	value_type operator*() const
 	{
@@ -463,32 +450,111 @@ public:
 	}
 	pwflat& operator++()
 	{
-		if (n > 0) {
-			--n;
+		if (operator bool()) {
 			++t;
 			++x;
-		}
-		else {
-			t = nullptr;
-			x = nullptr;
 		}
 
 		return *this;
 	}
 	pwflat operator++(int)
 	{
-		pwflat tmp{*this};
+		pwflat f_{*this};
 		operator++();
 
-		return tmp;
+		return f_;
 	}
+
+	// value and advance to _t
+	value_type operator()(const _T& _t)
+	{
+		while (operator bool()) {
+			const auto& [t_,x_] = operator*();
+			if (_t <= t_) {
+				return value_type(t_,x_);
+			}
+			operator++();
+		}
+
+		return value_type(_t, _x); // extrapolate
+	}
+	// value and don't modify curve
+	value_type operator()(const _T& _t) const
+	{
+		pwflat f{*this};
+
+		return f.value(_t);
+	}
+
+	// integrate and advance to _t
+	_X integrate(const _T& _t, const _T& t0 = _T(0))
+	{
+		_X I = 0;
+
+		while (operator bool()) {
+			const auto& [t_,x_] = operator*();
+			if (t_ <= t0) {
+				operator++();
+			}
+			else if (t_ <= _t) {
+				I += x*(t_ - t0);
+				t0 = t_;
+				operator++();
+			}
+			else {
+				I += x*(_t - t0);
+
+				break;
+			}
+		}
+
+		return I;
+	}
+
+	// integrate but don't advance
+	_X integral(const _T& _t, const _T& t0 = _T(0)) const
+	{
+		pwflat f{*this};
+
+		return f.integrate(_t, t0);
+	}
+
+	// t r(t) = int_0^t f(s) ds
+	_X spot(const _T& _t) const
+	{
+		const auto& [t_,x_] = operator*();
+
+		return _t <= t_ ? x_ : integral(_t)/_t;
+	}
+
+	// pv and discount to last payment, increment this and i
+	std::pair<_X,_X> present_value(pair<T,X>& i, const _T& _u = std::numeric_limits<T>::infinity())
+	{
+		_T t0 = 0;
+		_X pv = 0;
+		_X D = 1;
+
+		while (i) {
+			const auto& [u,c] = *i;
+			if (!operator bool() or u > _u) {
+				break;
+			}
+			D *= exp(-integrate(u, t0));
+			pv += c * D;
+			t0 = u;
+			++i;
+		}
+
+		return std::pair(pv, D);
+	}
+
 };
 int test_pwflat()
 {
 	{
-		int t[] = {1,2,3};
+		double t[] = {1,2,3};
 		double x[] = {.1,.2,.3};
-		pwflat f(3, t, x);
+		pwflat f(array(t), array(x));
 		assert(f);
 		pwflat f2{f};
 		assert(f2 == f);
@@ -523,78 +589,8 @@ int test_pwflat()
 }
 int test_pwflat_ = test_pwflat();
 
-template<class F, class T, class X>
-inline X value(F& f, const T& t, const X& _x = std::numeric_limits<X>::quiet_NaN())
-{
-	while (f) {
-		const auto& [s,x] = *f;
-		if (t <= s) {
-			return x;
-		}
-		++f;
-	}
-
-	return _x; // extrapolate
-}
-
-template<class F, class T, class X>
-inline X integrate(F& f, const T& t, T t0 = 0)
-{
-	X I = 0;
-
-	while (f) {
-		const auto& [s,x] = *f;
-		if (s < t0) {
-			++f;
-		}
-		else if (s <= t) {
-			I += x*(s - t0);
-			t0 = s;
-			++f;
-		}
-		else {
-			I += x*(t - t0);
-
-			break;
-		}
-	}
-
-	return I;
-}
-
-// t r(t) = int_0^t f(s) ds
-template<class F, class T, class X>
-inline X spot(const F& f, const T& t)
-{
-	const auto& [s,x] = *f;
-
-	return t <= s ? x : integrate(f, t)/t;
-}
-
-// present value of cash flows up to _u and discount to last cash flow
-template<class F, class I, class T, class X>
-inline std::pair<X,X> present_value(F& f, I& i, const T& _u = std::numeric_limits<T>::infinity())
-{
-	T t0 = 0;
-	X pv = 0;
-	X D = 1;
-
-	while (i) {
-		const auto& [u,c] = *i;
-		if (!f or u > _u) {
-			break;
-		}
-		D *= exp(-integrate(f, u, t0));
-		pv += c * D;
-		t0 = u;
-		++i;
-	}
-
-	return std::pair(pv, D);
-}
-
 /*
-// p = pv0 + D0 * sum_{} c * exp(-f(u - _u))
+// p = pvi + Di * sum c * exp(-f(u - _u))
 template<class F, class I, class T, class X>
 inline std::pair<T,X> bootstrap(F& f, const I& i, const X& p)
 {
