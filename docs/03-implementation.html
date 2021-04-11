@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>03-implementation</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="epub.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"></script><script>document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" />
+</head>
+<body>
+<p>\newcommand # Implementation</p>
+<h2 id="partition">Partition</h2>
+<p>A <em>partition</em> <span class="math inline">\(\mathcal{A}\)</span> of a set <span class="math inline">\(Ω\)</span> is a collection of disjoint subsets of <span class="math inline">\(Ω\)</span> with union <span class="math inline">\(Ω\)</span>. Partitions represent partial information: we only know what element of the partition <span class="math inline">\(ω\in Ω\)</span> belongs to, not <span class="math inline">\(ω\)</span> itself. The coarsest partition <span class="math inline">\(\{Ω\}\)</span> represents no information. The finest partition <span class="math inline">\(\{\{ω\}:ω\in Ω\}\)</span> represents complete information.</p>
+<p>A partition are partially ordered by <em>refinement</em>: <span class="math inline">\(\mathcal{B}\)</span> is a refinement of <span class="math inline">\(\mathcal{A}\)</span> if every <span class="math inline">\(B\in\mathcal{B}\)</span> is a subset of some <span class="math inline">\(A\in\mathcal{A}\)</span>. Define <span class="math inline">\(\mathcal{A}\preceq \mathcal{B}\)</span> iff <span class="math inline">\(\mathcal{B}\)</span> is a refinement of <span class="math inline">\(\mathcal{A}\)</span>. We write <span class="math inline">\(A|\mathcal{B}\)</span> for the atoms in <span class="math inline">\(\mathcal{B}\)</span> contained in <span class="math inline">\(A\in\mathcal{A}\)</span>.</p>
+<h2 id="algebra">Algebra</h2>
+<p>An <em>algebra</em> <span class="math inline">\(\mathcal{A}^*\)</span> on a set <span class="math inline">\(Ω\)</span> is a collection of subsets of <span class="math inline">\(Ω\)</span> closed under complement and union that contains the empty set. This implies <span class="math inline">\(Ω\)</span> belongs to the algebra and that it is also closed under intersection by De Morgan’s laws.</p>
+<p>An <em>atom</em> of <span class="math inline">\(\mathcal{A}^*\)</span> is a set <span class="math inline">\(A\in\mathcal{A}^*\)</span> with the property <span class="math inline">\(B\subseteq A\)</span> and <span class="math inline">\(B\in\mathcal{A}^*\)</span> imply <span class="math inline">\(B = A\)</span> or <span class="math inline">\(B\)</span> is the empty set.</p>
+<p>The atoms of a finite algebra of sets on <span class="math inline">\(Ω\)</span> form a partition of <span class="math inline">\(Ω\)</span> and the algebra is the smallest algebra of sets containing the atoms.</p>
+<p>It is simpler to work with partitions than with algebras and they are equivalent in the finite case.</p>
+<h2 id="filtration">Filtration</h2>
+<p>A <em>filtration</em> on a totally ordered set <span class="math inline">\(T\)</span> is a collection of partitions <span class="math inline">\(\mathcal{A}_t\)</span>, <span class="math inline">\(t\in T\)</span>, where <span class="math inline">\(\mathcal{A}_t\)</span> is coarser then <span class="math inline">\(\mathcal{A}_u\)</span> if <span class="math inline">\(t &lt; u\)</span>.</p>
+<p>A <em>stopping time</em> is a function <span class="math inline">\(τ\colon Ω\to T\)</span> such that <span class="math inline">\(\{ω\in Ω\mid τ(ω) = t\}\)</span> is a union of atoms of <span class="math inline">\(\mathcal{A}_t\)</span>.</p>
+<p>A partition <span class="math inline">\(\mathcal{B}\)</span> is a <em>refinement</em> of <span class="math inline">\(\mathcal{A}\)</span> if every <span class="math inline">\(B\in\mathcal{B}\)</span> is a subset of some <span class="math inline">\(A\in\mathcal{A}\)</span>. Define <span class="math inline">\(\mathcal{A}\preceq \mathcal{B}\)</span> iff <span class="math inline">\(\mathcal{B}\)</span> is a refinement of <span class="math inline">\(\mathcal{A}\)</span>. If <span class="math inline">\(T\)</span> is totally ordered then <span class="math inline">\(\mathcal{A}_T\)</span> is a <em>filtration</em> if <span class="math inline">\(\mathcal{A}_t\preceq\mathcal{A}_u\)</span> when <span class="math inline">\(t\le u\)</span>, <span class="math inline">\(t,u\in T\)</span>.</p>
+<p>A function <span class="math inline">\(σ\colon Ω\to T\)</span> is a <em>stopping time</em> for <span class="math inline">\(\mathcal{A}_T\)</span> if <span class="math inline">\(σ^{-1}(t) = \{ω\in Ω:σ(ω) = t\}\)</span> is a union of atoms belonging to <span class="math inline">\(\mathcal{A}_t\)</span>.</p>
+<h2 id="instrument">Instrument</h2>
+<p>An instrument returns a stream <span class="math inline">\((t, A)\)</span> of times and amounts. <span class="math inline">\(A\)</span> is <span class="math inline">\(t\)</span> measurable.</p>
+<p><span class="math inline">\(V_t = E_t[\sum_{u &gt; t} A_u D_u]\)</span>.</p>
+<p><span class="math inline">\(V_t(ω) =(\sum_{u &gt; t} A_u D_u)(ω)\)</span>.</p>
+<pre><code>auto value(A, D)
+{
+    return [](t, ω) {
+        while (A) {
+            const auto&amp; [u, a] = *A;
+            if (u &lt;= t) {
+                ++A;
+            }
+
+            return a(ω)*D(u,ω) + value(A, D)(ω);
+        }
+
+        return 0;
+    };
+}</code></pre>
+<p><span class="math inline">\(f\colon T\times R\to R\)</span>. <span class="math inline">\(F(ω) = f(time(ω), ω(time(ω)))\)</span>.</p>
+<p>Write example the works for both binomial and trinomial trees.</p>
+<p><span class="math inline">\(atoms(ω,A)\)</span> is a sequence of atoms</p>
+<p><span class="math inline">\(E(X,P) = \sum \{ X(α) P(α) \mid α\in ω\}\)</span>.</p>
+</body>
+</html>

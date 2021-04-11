@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Financial Markets</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="epub.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"></script><script>document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" />
+</head>
+<body>
+<header>
+<h1 class="title">Financial Markets</h1>
+</header>
+
+<p>Participants in financial markets trade instruments such as stocks, bonds, futures, currencies, and commodities. Buyers decide when and how much of each instrument to exchange with sellers based on the price offered, among other considerations. Trades occur over-the-counter or on exchanges.</p>
+<p>Over-the-counter refers to trades involving only two participants, the <em>buyer</em> and the <em>seller</em>. The credit quality of the participants is a factor that must be considered.</p>
+<p>Exchanges have liquidity providers who <em>make a market</em> for instruments. They quote prices for instruments to customers at which they can buy or sell given amounts. Exchanges typically do not hold instruments; they facilitate transactions between buyers and sellers extract a fraction of the amounts exchanged.</p>
+<p>Brokers/Dealers also facilitate transactions between market participants. They often hold inventories of instruments that are subject to market price movements.</p>
+<p>Holding an amount of an instrument entitles the owner to all cash flows associated with the instrument: dividends, coupons, margin adjustments, and storage costs for stocks, bonds, futures, and commodities respectively. Currencies do not have cash flows. Cash flows are proportional to the amount of an instrument held.</p>
+<p>Holdings are exchanged by trades between a buyer and a seller and accumulate to a position in instruments for the legal entities involved. A legal entity is an individual or corporation</p>
+<p>A <em>derivative</em> is a contract between a buyer and a seller for the exchange of future cash flows.</p>
+<h2 id="instrument">Instrument</h2>
+<p>Security - tangible asset.</p>
+<p>Derivative - contract between entities.</p>
+<h2 id="amount">Amount</h2>
+<p>Instruments trade in discrete amounts: shares, notional, contracts, denominations, and quantity for stocks, bonds, futures, currencies, and commodities respectively.</p>
+<h2 id="holding">Holding</h2>
+<p>A holding is an amount of an instrument owned by an entity.</p>
+<h2 id="trade">Trade</h2>
+<p>Exchange of holdings between entities at a given time.</p>
+<h2 id="position">Position</h2>
+<p>Collection of holdings.</p>
+<h2 id="accounting">Accounting</h2>
+<p>Net amount of instruments held by an entity.</p>
+<h1 id="mathematics">Mathematics</h1>
+<p>Math involves manipulating <em>propositions</em>, statements that are either true or false. Propositions can be combined using <em>logical connectives</em>, <em>not</em> (<span class="math inline">\(\neg\)</span>), <em>and</em> (<span class="math inline">\(\wedge\)</span>), <em>or</em> (<span class="math inline">\(\vee\)</span>), and <em>implies</em> (<span class="math inline">\(\Rightarrow\)</span>). An <em>axiom</em> (for a given mathematical system) is a proposition that is assumed to be true. A <em>proof</em> of ‘<span class="math inline">\(A\)</span> implies <span class="math inline">\(B\)</span>’ assumes <span class="math inline">\(A\)</span> is true and deduces <span class="math inline">\(B\)</span> using axioms and rules of inference. The rule of inference <em>modus ponens</em> states if <span class="math inline">\(P\)</span> and <span class="math inline">\(P\Rightarrow Q\)</span> then <span class="math inline">\(Q\)</span>.</p>
+<p>An <em>expression</em> is a well-formed formula from a set of symbols and rules. A <em>derivation</em> demonstrates equality of expressions using <em>substitution</em> and <em>evaluation</em>.</p>
+<h3 id="propositional-calculus">Propositional Calculus</h3>
+<p>A (well-formed) proposition is an expression involving (propositional) variables or any combinations of expressions built from logical connectives. A tautology is an expression that is true for all values of the variables it involves. Every tautology can be proved using the axioms <span class="math inline">\(P\Rightarrow P\)</span>, <span class="math inline">\(P\Rightarrow(Q\Rightarrow P)\)</span>, and <span class="math inline">\((P\Rightarrow(Q\Rightarrow R))\Rightarrow((P\Rightarrow Q)\Rightarrow(P\Rightarrow R))\)</span> using modus ponens.</p>
+<h3 id="first-order-logic">First Order Logic</h3>
+<p>If a proposition <span class="math inline">\(P(x)\)</span> is parameterized over a (symbolic) variable then <span class="math inline">\(\forall x\,P(x)\)</span> indicates the parameterized proposition is true for all values represented by <span class="math inline">\(x\)</span> and <span class="math inline">\(\exists x\,P(x)\)</span> indicates there is at least one value for <span class="math inline">\(x\)</span> making the proposition true.</p>
+<h2 id="set">Set</h2>
+<p>The language of set theory is ε.</p>
+<h2 id="relation">Relation</h2>
+<p>A <em>relation</em> on the sets <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> is a subset <span class="math inline">\(R\subseteq X\times Y\)</span>. Write <span class="math inline">\(xRy\)</span> for <span class="math inline">\((x,y)\in R\)</span>. The <em>right coset</em> of <span class="math inline">\(x\in X\)</span> is <span class="math inline">\(xR = \{y\in Y\mid xRy\}\)</span>. The <em>left coset</em> of <span class="math inline">\(y\in Y\)</span> is <span class="math inline">\(Ry = \{x\in X\mid xRy\}\)</span>.</p>
+<p>The <em>transpose</em> of a relation is <span class="math inline">\(R&#39; = \{(y,x)\mid xRy\}\)</span>. Note <span class="math inline">\(R&#39;&#39; = R\)</span>.</p>
+<p>The <em>composition</em> of <span class="math inline">\(R\subseteq X\times Y\)</span> and <span class="math inline">\(S\subseteq Y\times Z\)</span> is <span class="math inline">\(SR = \{(x,z)\mid xR\cap Rz\not=\emptyset\}\)</span>.</p>
+<p>Symmetric,</p>
+<h2 id="function">Function</h2>
+<p>A <em>function</em> is a relation where the <em>right coset</em> <span class="math inline">\(xR = \{y\in Y\mid xRy\}\)</span> is a singleton for all <span class="math inline">\(x\in X\)</span>. Write <span class="math inline">\(R(x)\)</span> for that unique element.</p>
+<p>Let <span class="math inline">\(B(X)\)</span> be the bounded functions from <span class="math inline">\(X\)</span> to <span class="math inline">\(\mathbf{R}\)</span>.</p>
+<h3 id="lambda-calculus">Lambda Calculus</h3>
+<p>A λ-term is a <em>variable</em>, <em>abstraction</em>, or <em>application</em>. A variable is a symbol, an abstraction is <span class="math inline">\((x\to E)\)</span> where <span class="math inline">\(x\)</span> is a variable and <span class="math inline">\(E\)</span> is a λ-term, and an application is <span class="math inline">\((EF)\)</span> where <span class="math inline">\(E\)</span> and <span class="math inline">\(F\)</span> are λ-terms.</p>
+<p>The lambda calculus can represent every function that can be computed.</p>
+<h2 id="measure">Measure</h2>
+<p>A <em>measure</em> is a set function <span class="math inline">\(μ\colon \mathcal{P}(X)\to\mathbf{R}\)</span> where <span class="math inline">\(μ(E\cup F) = μ(E) + μ(F) - μ(E\cap F)\)</span>, <span class="math inline">\(E,F\subseteq X\)</span>, and <span class="math inline">\(μ(\emptyset) = 0\)</span>. Measures don’t count things twice and the measure of nothing is zero. Let <span class="math inline">\(ba(X)\)</span> be the (finitely additive) measures on <span class="math inline">\(X\)</span>.</p>
+<h2 id="duality">Duality</h2>
+<p>The set of linear functionals from <span class="math inline">\(B(X)\)</span> to <span class="math inline">\(\mathbf{R}\)</span> is <span class="math inline">\(B(X)^*\)</span> and is isomorphic to <span class="math inline">\(ba(X)\)</span>. If <span class="math inline">\(m\in B(X)^*\)</span> define <span class="math inline">\(μ\in ba(X)\)</span> by <span class="math inline">\(μ(E) = m(1_E)\)</span>. If <span class="math inline">\(μ\in ba(X)\)</span> define <span class="math inline">\(m(\sum_i a_i 1_{A_i}) = \sum_i a_i μ(A_i)\)</span>, <span class="math inline">\(a_i\in\mathbf{R}\)</span>, <span class="math inline">\(A_i\subseteq X\)</span>.</p>
+<h2 id="probability">Probability</h2>
+<p>Degree of belief.</p>
+<p>Conditional probability: <span class="math inline">\(P(A\mid B) = P(A\cap B)/P(B)\)</span> so <span class="math inline">\(P(A\cap B) = P(A\mid B)P(B) = P(B\mid A)P(A)\)</span> and <span class="math inline">\(P(A\mid B) = P(B\mid A)P(A)/P(B)\)</span>.</p>
+<p>Law of total probability: <span class="math inline">\(P(A\mid B) = \sum_n P(A\mid B\cap C_n) P(C_n\mid B)\)</span> if <span class="math inline">\(\cup_n C_n \supseteq B\)</span> and <span class="math inline">\(C_i\cap C_j = \emptyset\)</span> if <span class="math inline">\(i \not= j\)</span>.</p>
+<p>Bayes theorem <span class="math inline">\(P(A_i\mid B) = P(B\mid A_i)/(\sum_j P(B\mid A_j)P(A_i))\)</span> if <span class="math inline">\(A_j\)</span> are pairwise disjoint.</p>
+<h3 id="random-variable">Random Variable</h3>
+<p>A <em>random variable</em> is a variable, a symbol taking the place of a number in equations and inequalities, with additional information about the probability of the values it can have.</p>
+<p>The <em>cumulative distribution function</em> of <span class="math inline">\(X\)</span> is <span class="math inline">\(F(x) = P(X\le x)\)</span> determines a random variable. It determines a measure <span class="math inline">\(A\mapsto P(X\in A) = \int_A dF(x)\)</span>, <span class="math inline">\(A\subseteq \mathbf{R}\)</span>.</p>
+<p>For any cdf <span class="math inline">\(F\)</span>, <span class="math inline">\(F(x) \le F(y)\)</span> if <span class="math inline">\(x &lt; y\)</span>, <span class="math inline">\(\lim_{x\to -\infty}F(x) = 0\)</span>, <span class="math inline">\(\lim_{x\to +\infty}F(x) = 1\)</span>, and <span class="math inline">\(\lim_{n\to\infty} F(x + 1/n) = F(x)\)</span> since <span class="math inline">\(\cap_n (-\infty, x + 1/n] = (-\infty, x]\)</span>. Any such function determines a cdf.</p>
+<p>A random variable is <em>discretely distributed</em> if <span class="math inline">\(x_i, p_i\in\mathbf{R}\)</span>, <span class="math inline">\(p_i &gt; 0\)</span>, <span class="math inline">\(\sum_i p_i = 1\)</span>, and <span class="math inline">\(P(X = x_i) = p_i\)</span>.</p>
+<p>A random variable is <em>continuously distributed</em> if <span class="math inline">\(F = \int F&#39;\)</span>.</p>
+<p>Expected value <span class="math inline">\(E[X] = \int x\,dF(x)\)</span>, <span class="math inline">\(E[f(X)] = \int f(x)\,dF(x)\)</span>.</p>
+<p>Variance <span class="math inline">\(\operatorname{Var}(X) = E[(X - EX)^2] = E[X^2] - E[X]^2\)</span>.</p>
+<p>Moment generating function <span class="math inline">\(m(s) = E[e^{sX}] = \sum_{n=0}^\infty m_n s^n/n!\)</span> where <span class="math inline">\(m_n = E[X^n]\)</span> is the <span class="math inline">\(n\)</span>-th moment.</p>
+<p>Cumulant generating function <span class="math inline">\(κ(s) = \log E[e^{sX}] = \sum_{n=0}^\infty κ_n s^n/n!\)</span> where <span class="math inline">\(κ_n\)</span> is the <span class="math inline">\(n\)</span>-th <em>cumulant</em>. Note <span class="math inline">\(κ(0) = 0\)</span>, <span class="math inline">\(κ&#39;(0) = E[X]\)</span>, and <span class="math inline">\(κ&#39;&#39;(0) = \operatorname{Var}(X)\)</span>.</p>
+<h4 id="examples">Examples</h4>
+<p>Bernoulli <span class="math inline">\(P(X = 1) = p\)</span>, <span class="math inline">\(P(X = 0) = 1 - p\)</span>, <span class="math inline">\(0\le p \le 1\)</span>.</p>
+<p>Binomial <span class="math inline">\(P(X = k) = \binom{n}{k} p^k (1 - p)^{n-k}\)</span>, <span class="math inline">\(0\le p \le 1\)</span>.</p>
+<p>Two random variables <span class="math inline">\(X,Y\)</span> are determined by their <em>joint distribution</em> <span class="math inline">\(F(x,y) = P(X\le x, Y\le y)\)</span>.</p>
+<p>A finite collection of random variables <span class="math inline">\((X_i)\)</span> are determined by <span class="math inline">\(F(x_1,\ldots,x_n) = P(X_1\le x_1,\ldots,X_n\le x_n)\)</span>.</p>
+<h3 id="stochastic-process">Stochastic Process</h3>
+<p>A <em>stochastic process</em> <span class="math inline">\((X_t)_{t\in T}\)</span> is a collection of random variables indexed by time <span class="math inline">\(T\)</span>. It is determined by all finite joint distributions <span class="math inline">\(F_{t_1,\ldots,t_n}(x_1,\ldots,x_n) = P(X_1\le t_1, \ldots, X_n\le x_n)\)</span>.</p>
+<h4 id="brownian-motion">Brownian Motion</h4>
+<h1 id="software">Software</h1>
+<h2 id="executable">Executable</h2>
+<h2 id="library">Library</h2>
+<h2 id="functional-programming">Functional Programming</h2>
+<p>Lambda calculus</p>
+<p>Curry-Howard-Lambek isomorphism.</p>
+<p><span class="math inline">\(Ix = x\)</span>, <span class="math inline">\(Kxy = x\)</span>, <span class="math inline">\(Sxyz = xz(yz)\)</span> [Note <span class="math inline">\(xyz = x(y(z))\)</span>]</p>
+<p><span class="math inline">\(X = x\Rightarrow(xS)K\)</span>. <span class="math inline">\(XXX = K\)</span> and <span class="math inline">\(XXXX = S\)</span> by β-reduction.</p>
+</body>
+</html>

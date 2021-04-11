@@ -1,8 +1,10 @@
 # PolyFin
 
 Some aspects of the financial world can be modeled using mathematics,
-but ultimatley the people writing the checks need that implemented on
+but ultimatley the people writing checks need that implemented on
 a computer to produce numbers they find useful for running their business.
+Students who can demonstrate they have the skills to do this are
+students who get hired.
 
 ## Library
 
@@ -12,24 +14,32 @@ Root finding. 1d HP Solver.
 
 AD. Automatic differentiation using ε. $f(x + ε) = f(x) + f'(x) ε + \cdots$.
 
-European option pricing.
-$E[\max\{k - F,0}] = E[(k - F)1(F \le k)] = kP(F\le k) - f P_s(F\le k)$, where $dP_s/dP = F/f$ is share measure.
+European option pricing. Cost of carry. Put-Call parity.
+$$
+	E[\max\{k - F,0\}] = E[(k - F)1(F \le k)] = kP(F\le k) - f P_s(F\le k),
+$$
+where $dP_s/dP = F/f$ is share measure. Carr-Madan formula.
 
-Bootstrap. Use piecewise flat forward curve.
+Bootstrap. Use piecewise flat forward curve. Interpolate by adding instruments that make sense
+to traders, not by using splines.
 
-Binomial Model. It is Brownian motion in the limit.
+Binomial Model. It is Brownian motion in the limit. Simplest case of general valuation formula.
 
 Deflator. $D_t = \exp(-\int_0^t f(s)\,ds)$, where $f(t)$ is the stochastic instantaneous forward rate.
 
 Zero. $D_t(u) = E_t[D_u]/D_t = E_t[\exp(-\int_t^u f(s)\,ds)] = \exp(-\int_t^u f_t(s)\,ds)$.
 
-Valuation. $V_t = E_t[\sum_{τ_j>t} A_j D_{τ_j}]/D_t$.
+Valuation. A derivative is a contract paying $A_j$ at $τ_j$. $V_t = E_t[\sum_{τ_j>t} A_j D_{τ_j}]/D_t$.
 
-Trinomial Model.
+Trinomial Model. More efficent than binomial. Use the same valuation code.
 
-Fixed Income.
+Fixed Income. Daycount fractions. Valuation versus settlement date.
 
-LIBOR Market Model. 
+LIBOR Market Model. Convexity adjustment for forwards versus futures.
+Parameterized by instantaneous futures, atm caplets, and
+instantaneous futures/forward correlation. Correlations do not change discount and caplet prices.
+
+Variance Swaps. Model independent valuation. Cubic term explains P&L, not delta or other greeks.
 
 ## Desiderata
 

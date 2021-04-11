@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>framework</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="epub.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"></script><script>document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" />
+</head>
+<body>
+<h1 id="polyfin">PolyFin</h1>
+<p>Some aspects of the financial world can be modeled using mathematics, but ultimatley the people writing checks need that implemented on a computer to produce numbers they find useful for running their business. Students who can demonstrate they have the skills to do this are students who get hired.</p>
+<h2 id="library">Library</h2>
+<p>Distrbutions. And the derivatives required for option valuation and Greeks.</p>
+<p>Root finding. 1d HP Solver.</p>
+<p>AD. Automatic differentiation using ε. <span class="math inline">\(f(x + ε) = f(x) + f&#39;(x) ε + \cdots\)</span>.</p>
+<p>European option pricing. Cost of carry. Put-Call parity. <span class="math display">\[
+    E[\max\{k - F,0\}] = E[(k - F)1(F \le k)] = kP(F\le k) - f P_s(F\le k),
+\]</span> where <span class="math inline">\(dP_s/dP = F/f\)</span> is share measure. Carr-Madan formula.</p>
+<p>Bootstrap. Use piecewise flat forward curve. Interpolate by adding instruments that make sense to traders, not by using splines.</p>
+<p>Binomial Model. It is Brownian motion in the limit. Simplest case of general valuation formula.</p>
+<p>Deflator. <span class="math inline">\(D_t = \exp(-\int_0^t f(s)\,ds)\)</span>, where <span class="math inline">\(f(t)\)</span> is the stochastic instantaneous forward rate.</p>
+<p>Zero. <span class="math inline">\(D_t(u) = E_t[D_u]/D_t = E_t[\exp(-\int_t^u f(s)\,ds)] = \exp(-\int_t^u f_t(s)\,ds)\)</span>.</p>
+<p>Valuation. A derivative is a contract paying <span class="math inline">\(A_j\)</span> at <span class="math inline">\(τ_j\)</span>. <span class="math inline">\(V_t = E_t[\sum_{τ_j&gt;t} A_j D_{τ_j}]/D_t\)</span>.</p>
+<p>Trinomial Model. More efficent than binomial. Use the same valuation code.</p>
+<p>Fixed Income. Daycount fractions. Valuation versus settlement date.</p>
+<p>LIBOR Market Model. Convexity adjustment for forwards versus futures. Parameterized by instantaneous futures, atm caplets, and instantaneous futures/forward correlation. Correlations do not change discount and caplet prices.</p>
+<p>Variance Swaps. Model independent valuation. Cubic term explains P&amp;L, not delta or other greeks.</p>
+<h2 id="desiderata">Desiderata</h2>
+<p><em>Prefer functions to objects.</em></p>
+<p>Functions have no side effects and only return a result. This enables compilers to generate efficient code since they have no side effects that might mutate data. Functions, by definition, are composable and make refactoring simpler. You know exactly what a functions does by looking at the code.</p>
+<p>Objects have data and methods, functions that can use and change object data. They map more closely to natural language usage when writing code. Object inheritance can reduce the amount of code by implementing common operations. Objects are difficult to design well and impede refactoring.</p>
+<p><em>Prefer streams to memory allocation.</em></p>
+<p>Streams produce data on demand and don’t care where it comes from. They generalize in-memory arrays that are accessed sequentially. This allows for potentially infinite streams and generators that run asynchronously.</p>
+<p><em>Use coroutines for asynchronous code execution.</em></p>
+<p>A coroutine is a function with a bookmark. Functions execute statements and return a value. Coroutines execute statements that can yield a value and set a bookmark. The next call to the coroutine resumes execution from the bookmark until the next yield or a return that terminates the coroutine. They are the simplest way to implement cooperative multi-tasking.</p>
+<p>Implement core in C++. Provide interfaces to other languages.<br />
+.Net. <a href="https://docs.microsoft.com/en-us/cpp/dotnet/dotnet-programming-with-cpp-cli-visual-cpp">C++/CLI</a><br />
+Python. <a href="https://cffi.readthedocs.io/en/latest/">CFFI</a>, <a href="https://cython.org/">Cython</a>, <a href="https://www.riverbankcomputing.com/software/sip/intro">SIP</a>.<br />
+Javascript. <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Emscripten">Emscripten</a></p>
+<h2 id="finance">Finance</h2>
+<p>Market <em>instruments</em> have <em>prices</em> and <em>cash flows</em>.</p>
+<p>Instruments <em>trade</em> in units of <em>amount</em>. For example, stocks trade in shares, bonds in terms of notional, exchange traded instruments specify contract size.</p>
+<p>Each instrument <em>issuer</em> determines its associated cash flows.</p>
+<p>A <em>holding</em> is an amount, instrument, and who owns it. Holders get cash flows proportional to the amount held.</p>
+<p>Trades result in <em>positions</em>: a collection of holdings.</p>
+<p>A <em>trade</em> is an exchange of holdings at some time between a <em>buyer</em> and a <em>seller</em>.</p>
+<p>Buyers decide when, what, and how much to trade. Sellers quote prices to buyers.</p>
+<p>The price for a trade (after it has <em>settled</em>) is the ratio of buyer amount and seller amount. It might not be the same as the quoted price (<em>slippage</em>).</p>
+<p>Dynamic trading creates synthetic market instruments. The values (mark-to-market) and amounts (trade blotter entries) correspond to prices and cash flows, respectively, of the synthetic instrument.</p>
+<h2 id="mathematics">Mathematics</h2>
+<p>A <em>model</em> specifies prices <span class="math inline">\(X_t\)</span> and cash flows <span class="math inline">\(C_t\)</span> for instruments depending on what happens in the future. These are random variables indexed by time: a stochastic process.</p>
+<p>A <em>sample space</em> <span class="math inline">\(Ω\)</span> is the set of what can happen in the future. Partial information is specified by a <em>partition</em> <span class="math inline">\(\mathcal{A}\)</span> of the sample space. A function <span class="math inline">\(X\colon Ω\to\bm{R}\)</span> is <span class="math inline">\(\mathcal{A}\)</span>-measurable if it is constant on each element of the partition. In this case <span class="math inline">\(X\colon\mathcal{A}\to\bm{R}\)</span> <strong>is</strong> a function on the elements of the partition.</p>
+<p>Let <span class="math inline">\(E\)</span> be the collection of all <em>entities</em> (market participants), <span class="math inline">\(I\)</span> be the collection of all instruments, and <span class="math inline">\(A_i\)</span>, <span class="math inline">\(i\in I\)</span> be the amounts at which instrument <span class="math inline">\(i\)</span> can trade. A <em>holding</em> is a triple <span class="math inline">\((a,i,e)\)</span> where <span class="math inline">\(e\in E\)</span> is the entity owning amount <span class="math inline">\(a\in A_i\)</span> of instrument <span class="math inline">\(i\in I\)</span>. A <em>trade</em> <span class="math inline">\((t;a,i,e;a&#39;,i&#39;,e&#39;)\)</span> indicates buyer <span class="math inline">\(e\)</span> exchanged <span class="math inline">\((a,i,e)\)</span> for <span class="math inline">\((a&#39;,i&#39;,e&#39;)\)</span> with seller <span class="math inline">\(e&#39;\)</span>. After the trade the buyer holds <span class="math inline">\((a&#39;,i&#39;,e)\)</span> and the seller holds <span class="math inline">\((a,i,e&#39;)\)</span>.</p>
+<p>A <em>position</em> is a collection of holdings. The <em>net ammount</em> of is the sum of the amounts of all holdings in the position for a given instrument and entity. This assumes instruments are <em>fungible</em>: every entity can convert <span class="math inline">\((a,i)\)</span> to <span class="math inline">\((a_0,i)\)</span> and <span class="math inline">\((a - a_0,i)\)</span> at no cost. This is close to being true if <span class="math inline">\(a &gt; a_0 &gt; 0\)</span>.</p>
+<p>A <em>trading strategy</em> is increasing sequence of times and amounts of market instruments to trade. It has associatd <em>values</em> and <em>amounts</em> Let <span class="math inline">\(τ_j\)</span> be the trading times and <span class="math inline">\(Γ_j\)</span> be the amount of shares to trade in each instrument. Trades accumulate to a <em>position</em> <span class="math inline">\(Δ_t = \sum_{τ_j &lt; t} Γ_j\)</span>. The value of the strategy at time <span class="math inline">\(t\)</span> is <span class="math inline">\(V_t = (Δ_t + Γ_t)\cdot X_t\)</span>. The amounts associated with a strategy at time <span class="math inline">\(t\)</span> are <span class="math inline">\(A_t = Δ_t\cdot C_t - Γ_t\cdot X_t\)</span>. They correspond to the mark-to-market and entries in the trade blotter, respectively, for the strategy.</p>
+<h2 id="implementation">Implementation</h2>
+<p>Time corresponds to a datetime type, often in terms of UTC. The difference of two times is an <em>interval</em> or <em>period</em>. A time and interval can be added to produce a time. We have <span class="math inline">\(t_1 = t_0 + (t_1 - t_0)\)</span> for times <span class="math inline">\(t_0\)</span>, <span class="math inline">\(t_1\)</span> and interval <span class="math inline">\(t_1 - t_0\)</span>. It is common to fix an <em>epoch</em> <span class="math inline">\(t_0\)</span> and express time <span class="math inline">\(t\)</span> as an interval <span class="math inline">\(t - t_0\)</span> in units of years.</p>
+<p>Price and cash flow are functions from <span class="math inline">\(T\times \Omega\to\bm{R}^I\)</span>, where <span class="math inline">\(I\)</span> is the set of instruments.</p>
+<h3 id="iterable">Iterable</h3>
+<p>An iterable <span class="math inline">\(i\)</span> of type <span class="math inline">\(T\)</span> has three functions: <code>curr:I -&gt; T</code> giving its current value, <code>next:I -&gt; I</code> that removes the current value, and <code>done:I -&gt; Bool</code> indicating the iterable has no more values available.</p>
+<h2 id="usage">Usage</h2>
+<p>Examples of usage in a pseudo language:</p>
+<pre><code>    // At time t0 stock has price s0 and optional dividend schedule.
+    stock S(t0, s0[, d0])
+    // Geometric Brownian motion with volatility σ.
+    model::bsm M(σ)
+    // Put option with strike k and expiration t
+    option::put p(k, t)
+    // Value is a function of time and state given market instruments and a model
+    v = value(p, S, M)(t0, ω0) 
+</code></pre>
+<p>Coding conventions</p>
+<pre><code>    namespace xyz {
+        class C {
+    public:
+
+        static const char* doc = R&quot;()&quot;;
+        C()
+        { }
+
+        static const char* foo_doc = R&quot;()&quot;;
+        int foo(int)
+        {
+        }
+    };
+    }</code></pre>
+</body>
+</html>
