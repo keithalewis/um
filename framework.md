@@ -1,3 +1,17 @@
+---
+title: Framework
+author: Keith A. Lewis
+institution: KALX, LLC
+email: kal@kalx.net
+classoption: fleqn
+fleqn: true
+abstract: implementing financial mathematics
+...
+
+\newcommand\RR{\bm{R}}
+\newcommand\NN{\bm{N}}
+\newcommand{\Var}{\operatorname{Var}}
+
 # PolyFin
 
 Some aspects of the financial world can be modeled using mathematics,

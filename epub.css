@@ -1,5 +1,6 @@
 /* This defines styles and classes used in the book */
-body { margin: 5%; text-align: justify; font-size: medium;
+body { text-align: left; font-size: medium;
+	margin: 1in 1.5in 1in 1.5in;
 	/*font-family: 'Times New Roman', 'Calisto', 'Cambria', "Segoe UI", Georgia, serif;*/
 	font-family: 'Cambria', "Segoe UI", Georgia, serif;
     font-size: 110%;
