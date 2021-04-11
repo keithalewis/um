@@ -6,9 +6,11 @@ a computer to produce numbers they find useful for running their business.
 
 ## Library
 
-Special functions. normal, logistic, Gamma, ...
+Specify interfaces instead of imlementations.
 
-Root finding. HP SOLVE function
+Distributions: normal, logistic, Gamma, ...
+
+Root finding.
 
 Automatic differentiation.
 
@@ -22,7 +24,6 @@ zero coupon bond $D_t(u) = E_t[D_u]/D_t = E_t[\exp(-\int_t^u f(s)\,ds)] = \exp(-
 Generic value function $V_t = E_t[\sum_{u>t} A_u D_u]/D_t$.
 Sample space is a set $Ω$. Partial information is represented by a partition of $Ω$. Elements of
 the partition are atoms. Everything is a function time and atoms.
-
 
 ## Desiderata
 
