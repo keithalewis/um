@@ -1,4 +1,4 @@
-CPPFLAGS = -g -Wall -std=c++17
+CPPFLAGS = -D_DEBUG -g -Wall -std=c++20
 KATEX = https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/
 FILES = $(wildcard 0*.md)
 HTML = $(FILES:.md=.html)
