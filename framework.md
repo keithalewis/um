@@ -78,6 +78,7 @@ Python. [CFFI](https://cffi.readthedocs.io/en/latest/),
 [SIP](https://www.riverbankcomputing.com/software/sip/intro).  
 Javascript. [Emscripten](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Emscripten)
 
+<!--
 ## Finance
 
 Market _instruments_ have _prices_ and _cash flows_.
@@ -196,3 +197,4 @@ Coding conventions
 	};
     }
 ```
+-->
