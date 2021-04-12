@@ -1,11 +1,14 @@
 // iterable.h - iterator with explicit operator bool() const
 #pragma once
+#ifdef _DEBUG
+#include <cassert>
+#endif
 #include <compare>
 #include <concepts>
 #include <iterator>
 #include <type_traits>
 
-namespace polyfin {
+namespace fms {
 
 	//!!! concept input_iterable, etc
 	template<class I>
@@ -155,7 +158,6 @@ namespace polyfin {
 	}
 	#endif // _DEBUG
 
-
 	// t, t + dt, ...
 	template<class T, class dT = T>
 	class sequence {
@@ -175,7 +177,7 @@ namespace polyfin {
 		~sequence()
 		{ }
 
-		bool operator<=>(const sequence&) const = default;
+		auto operator<=>(const sequence&) const = default;
 
 		sequence begin() const
 		{

@@ -1,11 +1,12 @@
 // test.cpp
 #include <cassert>
 #include "iterable.h"
-#include "root1d.h"
+//#include "root1d.h"
 //#include "distribution.h"
 
-using namespace polyfin;
+using namespace fms;
 
+/*
 int test_when()
 {
 	{
@@ -23,6 +24,7 @@ int test_when()
 	return 0;
 }
 int test_when_ = test_when();
+*/
 
 int test_sequence_i = sequence<int>::test();
 int test_sequence_d = sequence<double>::test();
@@ -38,9 +40,9 @@ int test_length0 = test_length(take(2, sequence<int>()), take(3, sequence<int>()
 int test_length1 = test_length(take(0, sequence<int>()), take(3, sequence<int>()));
 int test_length2 = test_length(take(0, sequence<int>()), take(0, sequence<int>()));
 
-int test_root1d = secant<double,double>::test();
+//int test_root1d = secant<double,double>::test();
 
-int test_apply = apply<std::function<int(int)>,sequence<int>>::test();
+//int test_apply = apply<std::function<int(int)>,sequence<int>>::test();
 
 int main()
 {

@@ -3,18 +3,18 @@
 #include <concepts>
 #include <type_traits>
 
-namespace polyfin {
+namespace fms {
 
 	template<class D>
 	concept distribution = requires(D d) {
 		typename D::xtype;
 		typename D::stype;
 		// cumulative distribution function and derivatives
-		{ d.cdf(D::xtype,D::stype,std::size_t) const } -> std::same_as<D::xtype>;
-		// Esscher distribution function d/ds P_s(X <= x)
-		{ d.edf(D::xtype,D::stype) const } -> std::same_as<D::xtype>;
+		{ d.cdf(D::xtype, D::stype, size_t) } -> std::same_as<typename D::xtype>;
+		// Esscher derivative function d/ds P_s(X <= x)
+		{ d.edf(D::xtype, D::stype) } -> std::same_as<typename D::xtype>;
 		// cumulant generating function and derivatives
-		{ d.cgf(D::stype,std::size_t) const } -> std::same_as<D::stype>;
+		{ d.cgf(D::stype, size_t) } -> std::same_as<typename D::stype>;
 	};
 
 } // namespace polyfin
