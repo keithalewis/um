@@ -2,6 +2,7 @@
 #pragma once
 #ifdef _DEBUG
 #include <cassert>
+#include <chrono>
 #endif
 #include <compare>
 #include <concepts>
@@ -21,10 +22,12 @@ namespace fms {
 		{  *i } -> std::convertible_to<typename I::value_type>; // remove_cv???
 		{ ++i } -> std::same_as<I&>;
 		{ i++ } -> std::same_as<I>;
-		//{ i.operator==(i) const } -> std::same_as<bool>;
-		//{ i.end() } -> std::same_as<I>;
+		{ i.operator==(i) } -> std::same_as<bool>;
+		{ i.begin() } -> std::same_as<I>;
+		{ i.end() } -> std::same_as<I>;
 	};
 
+	// all iterable items are equal
 	template<iterable I, iterable J>
 	inline constexpr bool equal(I i, J j)
 	{
@@ -36,24 +39,24 @@ namespace fms {
 		return !i and !j;
 	}
 
-	// increment until first item satisfying p
+	// return end or first item satisfying p
 	template<iterable I, class P>
-	inline constexpr I until(I i, const P& p)
+	inline constexpr I upto(I i, const P& p)
 	{
-		return !i or p(i) ? i : until(++i, p);
+		return !i or p(i) ? i : upto(++i, p);
 	}
 
 	// return end or first false item
 	template<iterable I>
 	inline constexpr I all(I i)
 	{
-		return until(i, [](I i) { return !*i; });
+		return upto(i, [](I i) { return !*i; });
 	}
 	// return end or first true item
 	template<iterable I>
 	inline constexpr I any(I i)
 	{
-		return until(i, [](I i) { return *i; });
+		return upto(i, [](I i) { return *i; });
 	}
 
 	// filter on predicate p
@@ -62,13 +65,16 @@ namespace fms {
 		I i;
 		const P& p;
 	public:
-		using iterator_category = typename I::iterator_category;
+		using iterator_category = std::input_iterator_tag;
+		using difference_type = typename I::difference_type;
 		using value_type = typename I::value_type;
+		using pointer = typename I::pointer;
+		using reference = typename I::reference;
 
-		when(const I& i_, const P&p)
-			: i(i_), p(p)
+		when(const I& i, const P&p)
+			: i(i), p(p)
 		{
-			i = until(i, p);
+			this->i = upto(this->i, p);
 		}
 
 		bool operator==(const when& w) const
@@ -95,7 +101,9 @@ namespace fms {
 		}
 		when& operator++()
 		{
-			i = until(++i, p);
+			if (i) {
+				i = upto(++i, p);
+			}
 
 			return *this;
 		}
@@ -107,6 +115,60 @@ namespace fms {
 			return w_;
 		}
 	};
+
+	// filter on predicate p
+	template<iterable I, class P>
+	class until {
+		I i;
+		const P& p;
+	public:
+		using iterator_category = std::input_iterator_tag;
+		using difference_type = typename I::difference_type;
+		using value_type = typename I::value_type;
+		using pointer = typename I::pointer;
+		using reference = typename I::reference;
+
+		until(const I& i, const P& p)
+			: i(i), p(p)
+		{ }
+
+		bool operator==(const until& u) const
+		{
+			return i == u.i and &p == &u.p;
+		}
+
+		until begin() const
+		{
+			return until(i, p);
+		}
+		until end() const
+		{
+			return until(upto(i, p), p);
+		}
+
+		explicit operator bool() const
+		{
+			return !p(i);
+		}
+		value_type operator*() const
+		{
+			return *i;
+		}
+		until& operator++()
+		{
+			++i;
+
+			return *this;
+		}
+		until operator++(int)
+		{
+			until w_(i, p);
+			operator++();
+
+			return w_;
+		}
+	};
+
 
 #ifdef _DEBUG
 
@@ -165,8 +227,10 @@ namespace fms {
 		dT dt;
 	public:
 		using iterator_category = std::input_iterator_tag; // ??? bidirectional
-		using value_type = T;
 		using difference_type = dT;
+		using value_type = T;
+		using pointer = T*;
+		using reference = T&;
 
 		// default 0, 1, ...
 		sequence(const T& t = T(0), const dT& dt = dT(1))
@@ -242,12 +306,26 @@ namespace fms {
 				assert(3 == *s++);
 				assert(5 == *s++);
 			}
-			/*
 			{
-	//using namespace std::chrono;
-				sequence s(date{2001/January/1}, month{1});
+				using std::chrono::year_month_day;
+				using std::chrono::months;
+				using std::chrono::year;
+				constexpr auto b{ year{2001} / 1 / 1 };
+				// sequence s2(b, months{ 3 }); // this is why people hate chrono
+				sequence<year_month_day,months> s(b, months{ 3 });
+
+				assert(s);
+				auto s2{ s };
+				assert(s2);
+				assert(s == s2);
+				s = s2;
+				assert(!(s != s2));
+				++s;
+				assert((*s).year() == std::chrono::year(2001));
+				assert((*s).month() == std::chrono::month(4));
+				assert((*s).day() == std::chrono::day(1));
 			}
-			*/
+			
 
 			return 0;
 		}
@@ -272,6 +350,10 @@ namespace fms {
 	public:
 		using iterator_category = std::input_iterator_tag; //!!! bidirectional
 		using value_type = T;
+		using difference_type = ptrdiff_t;
+		using value_type = T;
+		using pointer = T*;
+		using reference = T&;
 
 		ptr(T* t = nullptr)
 			: t(t)
@@ -356,7 +438,10 @@ namespace fms {
 		I i;
 	public:
 		using iterator_category = typename I::iterator_category;
+		using difference_type = typename I::difference_type;
 		using value_type = typename I::value_type;
+		using pointer = typename I::pointer;
+		using reference = typename I::reference;
 
 		take(size_t n, const I& i)
 			: n(n), i(i)
@@ -504,8 +589,12 @@ namespace fms {
 		I i;
 		J j;
 	public:
-		using iterator_category = std::input_iterator_tag; // common_type ???
+		using iterator_category = std::common_type_t<typename I::iterator_category, typename J::iterator_category>;
+		using difference_type = ptrdiff_t; // ???
 		using value_type = std::pair<typename I::value_type, typename J::value_type>;
+		using pointer = value_type*;
+		using reference = value_type&;
+
 		pair(const I& i, const J& j)
 			: i(i), j(j)
 		{ }
@@ -549,16 +638,34 @@ namespace fms {
 		}
 	};
 
-	template<class F, iterable I>
+	template<iterable I, class F>
 	class apply {
-		const F& f;
 		I i;
+		const F& f;
 	public:
 		using iterator_category = typename I::iterator_category;
+		using difference_type = typename I::difference_type;
 		using value_type = std::invoke_result_t<F,typename I::value_type>;
-		apply(const F& f, const I& i)
-			: f(f), i(i)
+		using pointer = value_type*;
+		using reference = value_type&;
+
+		apply(const I& i, const F& f)
+			: i(i), f(f)
 		{ }
+
+		bool operator==(const apply& a) const
+		{
+			return i == a.i and &f == &a.f;
+		}
+
+		apply begin() const
+		{
+			return apply(i, f);
+		}
+		apply end() const
+		{
+			return apply(i.end(), f);
+		}
 
 		explicit operator bool() const
 		{

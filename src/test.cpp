@@ -1,6 +1,7 @@
 // test.cpp
 #include <cassert>
 #include "iterable.h"
+#include "fms_pwflat.h"
 //#include "root1d.h"
 //#include "distribution.h"
 
@@ -40,6 +41,7 @@ int test_length0 = test_length(take(2, sequence<int>()), take(3, sequence<int>()
 int test_length1 = test_length(take(0, sequence<int>()), take(3, sequence<int>()));
 int test_length2 = test_length(take(0, sequence<int>()), take(0, sequence<int>()));
 
+int test_value = pwflat::test_value();
 //int test_root1d = secant<double,double>::test();
 
 //int test_apply = apply<std::function<int(int)>,sequence<int>>::test();

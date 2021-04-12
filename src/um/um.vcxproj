@@ -148,7 +148,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\distribution.h" />
+    <ClInclude Include="..\fms_pwflat.h" />
     <ClInclude Include="..\iterable.h" />
+    <ClInclude Include="..\fms_root1d.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

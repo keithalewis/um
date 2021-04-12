@@ -29,5 +29,11 @@
     <ClInclude Include="..\distribution.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\fms_pwflat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fms_root1d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
