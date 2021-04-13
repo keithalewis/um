@@ -2,7 +2,7 @@
 #include <cassert>
 #include "fms_iterable.h"
 #include "fms_pwflat.h"
-//#include "root1d.h"
+#include "fms_root1d.h"
 //#include "distribution.h"
 
 using namespace fms;
@@ -47,6 +47,7 @@ int test_value = pwflat::test_value();
 //int test_root1d = secant<double,double>::test();
 
 //int test_apply = apply<std::function<int(int)>,sequence<int>>::test();
+int test_root1d = root1d::secant<double, double>::test();
 
 int main()
 {

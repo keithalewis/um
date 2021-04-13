@@ -594,6 +594,10 @@ namespace fms {
 		~counted()
 		{ }
 
+		const I& iterable() const
+		{
+			return i;
+		}
 		size_t count() const
 		{
 			return n;
