@@ -22,32 +22,63 @@ students who get hired.
 
 ## Library
 
-Distrbutions. And the derivatives required for option valuation and Greeks.
+Terminology: _Price_ is the market price of an instrument. _Value_ is
+an analog of price computed using a model.
 
-Root finding. 1d HP Solver.
+Distrbutions. Cumulative distribution functions random variables
+and their derivatives required for option valuation and greeks.
 
-AD. Automatic differentiation using ε. $f(x + ε) = f(x) + f'(x) ε + \cdots$.
+Root finding. 1d Hewlett-Packer/Kahane Solver. It just works.
 
-European option pricing. Cost of carry. Put-Call parity.
+AD. Automatic differentiation using [ε](https://github.com/keithalewis/epsilon).
+Also useful for Machine Learning.
+
+European option (forward/Black) valuation. $F = f \exp(s X - κ(s))$ parameterizes all positive payoffs
+by $f$, $s$, and $X$ where $E[X] = 0$ and $\Var(X) = 1$. Note $E[F] = f$, $s^2 = \Var(\log F)$
+and $κ(s) = \log E[\exp(s X)]$ is the cumulant generating function.
+The forward value of an European option paying $ν(F)$ at expiration is $v = E[ν(F)]$.
+For a put option
 $$
-	E[\max\{k - F,0\}] = E[(k - F)1(F \le k)] = kP(F\le k) - f P_s(F\le k),
+	v = E[\max\{k - F,0\}] = E[(k - F)1(F \le k)] = kP(F\le k) - f P_s(F\le k),
 $$
-where $dP_s/dP = F/f$ is share measure. Carr-Madan formula.
+where $dP_s/dP = \exp(s X - κ(s))$ is share/Esscher measure.
+All greeks can be computed in terms of the derivatives of $P_s(X\le X)$ and $κ(s)$.
+The Carr-Madan formula extends this to any payoff function.
 
-Bootstrap. Use piecewise flat forward curve. Interpolate by adding instruments that make sense
-to traders, not by using splines.
+Discount. The price of a zero coupon bond maturing at $t$ is $D(t) = \exp(-\int_0^t f(s)\,ds)$
+where $f(s)$ is the continuously compounded forward rate at $s$.
+The _spot rate_ $r$ is defined by $D(t) = \exp(-t r(t))$ so
+$r(t) = (1/t)\int_0^t f(s)\,ds$ is the average forward rate.
 
-Binomial Model. It is Brownian motion in the limit. Simplest case of general valuation formula.
+European option valuation. 
+The (spot) value of an European option paying $ν(F)$ at expiration $t$ is $v = D(t)E[ν(F)]$.
+Greeks can be evaluated using the chain rule.
 
-Deflator. $D_t = \exp(-\int_0^t f(s)\,ds)$, where $f(t)$ is the stochastic instantaneous forward rate.
+Bootstrap. Use piecewise flat forward curve.
+Bond yield is a special case for a single fixed income instrument using a constant forward.
+Interpolate by adding synthetic instruments that make sense to traders, not by using splines.
+
+Stochatic rates. Equity volatility swamps out interest rate volatility, but the
+stochastic forward rate determines the value of every fixed income instrument.
+
+Deflator. Reciprocal of money market account where one unit is reinvested at
+the prevailing repo rate $f_s$: $D_t = \exp(-\int_0^t f_s\,ds)$.
+
+FTAP: Every arbitrage-free model is parameterized by a vector-valued martingale
+and a deflator.
 
 Zero. $D_t(u) = E_t[D_u]/D_t = E_t[\exp(-\int_t^u f(s)\,ds)] = \exp(-\int_t^u f_t(s)\,ds)$.
 
 Valuation. A derivative is a contract paying $A_j$ at $τ_j$. $V_t = E_t[\sum_{τ_j>t} A_j D_{τ_j}]/D_t$.
 
+Binomial Model. It is Brownian motion in the limit. The increase in computing power
+makes it more practical.
+
 Trinomial Model. More efficent than binomial. Use the same valuation code.
 
 Fixed Income. Daycount fractions. Valuation versus settlement date.
+
+Risky Fixed Income. Default time and recovery of bond issuer.
 
 LIBOR Market Model. Convexity adjustment for forwards versus futures.
 Parameterized by instantaneous futures, atm caplets, and
