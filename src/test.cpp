@@ -1,6 +1,6 @@
 // test.cpp
 #include <cassert>
-#include "iterable.h"
+#include "fms_iterable.h"
 #include "fms_pwflat.h"
 //#include "root1d.h"
 //#include "distribution.h"
@@ -34,6 +34,8 @@ int test_sequence_f = sequence<float>::test();
 int test_ptr = ptr<int>::test();
 
 int test_take = take<ptr<int>>::test();
+
+int test_counted = counted<ptr<int>>::test();
 
 int test_array_i = test_array<int>();
 

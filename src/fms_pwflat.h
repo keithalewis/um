@@ -1,7 +1,7 @@
 // fms_pwflat.cpp - piecewise flat curve
 #include <algorithm>
 #include <limits>
-#include "iterable.h"
+#include "fms_iterable.h"
 
 namespace fms::pwflat {
 
@@ -147,7 +147,7 @@ namespace fms::pwflat {
 		_X pv = 0;
 		_X D = 1;
 
-		while (u and c) {
+		while (t and x and u and c) {
 			if (*u >= t0) {
 				D *= exp(-integrate(t, x, *u, t0));
 				pv += *c * D;
@@ -172,7 +172,7 @@ namespace fms::pwflat {
 	// f(t) = x[i], t[i-1] < t <= t[i]
 	template<iterable T, iterable X,
 		class _T = typename T::value_type, class _X = typename X::value_type>
-		class curve {
+	struct curve {
 		T t;
 		X x;
 		_X _x; // extrapolate
@@ -180,6 +180,9 @@ namespace fms::pwflat {
 		using iterator_category = std::input_iterator_tag;
 		using value_type = std::pair<_T, _X>;
 
+		curve(const X& x)
+			: t(0), x(0), _x(x)
+		{ }
 		curve(const T& t, const X& x, const _X& _x = std::numeric_limits<_X>::quiet_NaN())
 			: t(t), x(x), _x(_x)
 		{ }

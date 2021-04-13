@@ -18,12 +18,12 @@
     <ClCompile Include="..\test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\bootstrap.h">
+    <ClCompile Include="..\fms_bootstrap.h">
       <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\iterable.h">
+    <ClInclude Include="..\fms_iterable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\distribution.h">

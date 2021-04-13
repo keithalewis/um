@@ -1,4 +1,4 @@
-// iterable.h - iterator with explicit operator bool() const
+// fms_iterable.h - iterator with explicit operator bool() const
 #pragma once
 #ifdef _DEBUG
 #include <cassert>
@@ -27,6 +27,19 @@ namespace fms {
 		{ i.end() } -> std::same_as<I>;
 	};
 
+	// All iterables begin alike...
+	template<iterable I>
+	inline I begin(I i)
+	{
+		return i;
+	}
+	// ...but each ends after its own fashion.
+	template<iterable I>
+	inline I end(I i)
+	{
+		return i.end();
+	}
+
 	// all iterable items are equal
 	template<iterable I, iterable J>
 	inline constexpr bool equal(I i, J j)
@@ -44,6 +57,18 @@ namespace fms {
 	inline constexpr I upto(I i, const P& p)
 	{
 		return !i or p(i) ? i : upto(++i, p);
+	}
+
+	// return end or last item before p is satisfied
+	template<iterable I>
+	inline constexpr I back(I i)
+	{
+		while (I _i = i++) {
+			if (!i)
+				return _i;
+		}
+
+		return i;
 	}
 
 	// return end or first false item
@@ -116,7 +141,7 @@ namespace fms {
 		}
 	};
 
-	// filter on predicate p
+	// stop when p is true
 	template<iterable I, class P>
 	class until {
 		I i;
@@ -156,16 +181,18 @@ namespace fms {
 		}
 		until& operator++()
 		{
-			++i;
+			if (operator bool()) {
+				++i;
+			}
 
 			return *this;
 		}
 		until operator++(int)
 		{
-			until w_(i, p);
+			until u_(i, p);
 			operator++();
 
-			return w_;
+			return u_;
 		}
 	};
 
@@ -206,7 +233,7 @@ namespace fms {
 
 		return n;
 	}
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	template<iterable I, iterable J>
 	inline int test_length(I i, J j)
 	{
@@ -218,7 +245,16 @@ namespace fms {
 
 		return 0;
 	}
-	#endif // _DEBUG
+#endif // _DEBUG
+	template<iterable I, iterable J>
+	inline J& copy(I i, J& j)
+	{
+		while (i and j) {
+			*j++ = *i++;
+		}
+
+		return j;
+	}
 
 	// t, t + dt, ...
 	template<class T, class dT = T>
@@ -348,7 +384,7 @@ namespace fms {
 	class ptr {
 		T* t;
 	public:
-		using iterator_category = std::input_iterator_tag; //!!! bidirectional
+		using iterator_category = std::input_iterator_tag; //!!! random access
 		using value_type = T;
 		using difference_type = ptrdiff_t;
 		using value_type = T;
@@ -382,6 +418,10 @@ namespace fms {
 		{
 			return *t;
 		}
+		reference operator*()
+		{
+			return *t;
+		}
 		ptr& operator++()
 		{
 			if (operator bool()) {
@@ -392,13 +432,13 @@ namespace fms {
 		}
 		ptr operator++(int)
 		{
-			ptr t_{*this};
+			ptr p_{*this};
 			operator++();
 
-			return t_;
+			return p_;
 		}
 
-	#ifdef _DEBUG
+#ifdef _DEBUG
 		static int test()
 		{
 			{
@@ -429,7 +469,7 @@ namespace fms {
 
 			return 0;
 		}
-	#endif // _DEBUG
+#endif // _DEBUG
 	};
 
 	template<iterable I>
@@ -514,6 +554,11 @@ namespace fms {
 
 				assert(!++t);
 			}
+			{
+				typename I::value_type p[] = { 1,2,3 };
+				auto t = take(3, ptr(p));
+				assert(3 == *back(t));
+			}
 
 			return 0;
 		}
@@ -528,6 +573,101 @@ namespace fms {
 
 		return i;
 	}
+
+	// keep track of iterable increments
+	template<iterable I>
+	class counted {
+		I i;
+		size_t n;
+	public:
+		using iterator_category = typename I::iterator_category;
+		using difference_type = typename I::difference_type;
+		using value_type = typename I::value_type;
+		using pointer = typename I::pointer;
+		using reference = typename I::reference;
+
+		counted(const I& i, size_t n = 0)
+			: i(i), n(n)
+		{ }
+		counted(const counted&) = default;
+		counted& operator=(const counted&) = default;
+		~counted()
+		{ }
+
+		size_t count() const
+		{
+			return n;
+		}
+
+		auto operator<=>(const counted&) const = default;
+
+		counted begin() const
+		{
+			return *this;
+		}
+		counted end() const
+		{
+			return counted(i, length(i));
+		}
+
+		explicit operator bool() const
+		{
+			return !!i;
+		}
+		value_type operator*() const
+		{
+			return *i;
+		}
+		counted& operator++()
+		{
+			if (operator bool()) {
+				++n;
+				++i;
+			}
+
+			return *this;
+		}
+		counted operator++(int)
+		{
+			counted t_{ *this };
+			operator++();
+
+			return t_;
+		}
+#ifdef _DEBUG
+		static int test()
+		{
+			{
+				typename I::value_type p[] = { 1,2,3 };
+				auto t = counted(ptr(p));
+				assert(t);
+				assert(0 == t.count());
+
+				auto t2{ t };
+				assert(t2);
+				assert(t == t2);
+				assert(!(t != t2));
+
+				t = t2;
+				assert(t);
+				assert(t == t2);
+				assert(!(t != t2));
+
+				assert(1 == *t);
+				++t;
+				assert(t);
+				assert(1 == t.count());
+				assert(2 == *t);
+
+				assert(2 == *t++);
+				assert(2 == t.count());
+				assert(3 == *t);
+			}
+
+			return 0;
+		}
+#endif // _DEBUG
+	};
 
 	template<class T>
 	inline auto array(size_t n = 0, T* t = nullptr)
@@ -688,7 +828,7 @@ namespace fms {
 
 			return a_;
 		}
-	#ifdef _DEBUG
+#ifdef _DEBUG
 		static int test()
 		{
 			{
@@ -701,7 +841,7 @@ namespace fms {
 
 			return 0;
 		}
-	#endif // _DEBUG
+#endif // _DEBUG
 	};
 
 } // namespace polyfin

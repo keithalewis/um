@@ -4,6 +4,7 @@
 #include <functional>
 #include <iterator>
 #include <limits>
+#include "fms_iterable.h"
 
 namespace fms::root1d {
 
@@ -24,6 +25,14 @@ namespace fms::root1d {
 
 		return std::fabs(a - b) <= std::max(abs, rel * (std::fabs(a) + std::fabs(b)));
 	}
+	
+	/*
+	template<fms::iterable I, class P> 
+	inline I solve(I i, const P& p)
+	{
+		return back(i, p);
+	}
+	*/
 
 	// until(i, [](auto i) {return relabs(*i) < eps;});
 	// secant s(...);
@@ -63,13 +72,21 @@ namespace fms::root1d {
 		}
 		secant& operator++()
 		{
-			auto x_ = x1 - y1 / m;
+			bool bounded = y0 * y1 < 0;
+
+			X x_ = x1 - y1 / m;
+			Y y_ = f(x_);
+
 			x0 = x1;
 			y0 = y1;
-			x1 = x;
-			y1 = f(x);
+			x1 = x_;
+			y1 = y_;
 			m_ = m;
 			m = (y1 - y0) / (x1 - x0);
+
+			if (bounded and std::fabs(m) < std::fabs(m_)) {
+				m = m_; // don't zoom off
+			}
 
 			return *this;
 		}
@@ -79,6 +96,15 @@ namespace fms::root1d {
 			operator++();
 
 			return s_;
+		}
+
+		static bool nearly_zero(const secant& s) const
+		{
+			return nearly_equal(s.x0, s.x1) and nearly_equal(x.y1, 0);
+		}
+		value_type solve()
+		{
+			return back(until(*this, nearly_zero));
 		}
 #ifdef _DEBUG
 		static int test()

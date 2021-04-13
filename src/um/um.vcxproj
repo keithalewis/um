@@ -143,13 +143,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\bootstrap.h" />
+    <ClCompile Include="..\fms_bootstrap.h" />
     <ClCompile Include="..\test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\distribution.h" />
     <ClInclude Include="..\fms_pwflat.h" />
-    <ClInclude Include="..\iterable.h" />
+    <ClInclude Include="..\fms_iterable.h" />
     <ClInclude Include="..\fms_root1d.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
