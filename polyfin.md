@@ -40,7 +40,7 @@ be implemented using coroutines.
 A coroutine is a function with a bookmark.
 Functions execute statements and return a value.
 Coroutines execute statements that can yield a value and set a bookmark.
-The next call to the coroutine resumes execution from the bookmark until
+Subsequent calls to the coroutine resume execution from the bookmark until
 the next yield, or a return that terminates the coroutine.
 They are the simplest way to correctly implement cooperative multi-tasking.
 
@@ -54,7 +54,7 @@ and derivatives required for option valuation and greeks.
 
 Root finding. 1d Hewlett-Packard/Kahane Solver. It just works.
 
-Automatic differentiation. Use [\epsilon](https://github.com/keithalewis/epsilon).
+Automatic differentiation. Use [$\epsilon$](https://github.com/keithalewis/epsilon).
 Also useful for Machine Learning.
 
 European option (forward/Black) valuation. $F = f \exp(s X - κ(s))$ parameterizes all positive payoffs
@@ -68,7 +68,7 @@ $$
 where $dP_s/dP = \exp(s X - κ(s))$ is share/Esscher measure.
 All greeks can be computed in terms of the derivatives of $P_s(X\le X)$ and $κ(s)$.
 The Carr-Madan formula extends this to any payoff function.
-The Black model is the case where $X = B_t/\sqrt{t}$ and $s = \sigma\sqrt{t}$,
+The Black model is the case $X = B_t/\sqrt{t}$ and $s = \sigma\sqrt{t}$,
 where $B_t$ is standard Brownian motion.
 
 Discount. The price of a zero coupon bond maturing at $t$ is $D(t) = \exp(-\int_0^t f(s)\,ds)$
@@ -92,13 +92,13 @@ Deflator. Reciprocal of money market account where one unit is reinvested at
 the prevailing repo rate $f_s$: $D_t = \exp(-\int_0^t f_s\,ds)$.
 
 FTAP: Every arbitrage-free model is parameterized by a vector-valued martingale
-$M_t$ and a deflator where deflated price are
+$M_t$ and a deflator where the deflated price is
 $$
 	X_t D_t = M_t - \sum_{s\le t} C_s D_s.
 $$
 Prices $X_t$ and cash flows $C_t$ satisfy
 $$
-	X_t D_t = E_t[X_u D_u + \sum_{t < s \le u} C_s D_s].
+	X_t D_t = E_t[X_u D_u + \sum_{t < s \le u} C_s D_s], u > t.
 $$
 
 Zero Coupon Bond. The price at time $t$ of a zero coupon bond maturing at $u$ is
@@ -172,9 +172,10 @@ Generic framework for valuing any instrument.
 	pwflat::curve c;
 	date valuation(2021/1/1);
 	for (auto [i,c] : pair(is, cs)) {
-		i.fix(valuation, c); // set coupon
+		i.fix(valuation, c); // determines actual cash flows
 		c.push_back(bootstrap(c, i));
 	}
+	// use c...
 
 ```
 
@@ -190,6 +191,7 @@ Generic framework for valuing any instrument.
 	// first time barrier is exceeded
 	auto tau = take(1, max(S(B.times())) > UIC.h);
 	// cash flows are functions T -> Omega -> R
+	// A = t -> (w -> max(S(t)(w) - k, 0))
 	auto A = [S,UIC](auto t) {
 		return [S,UIC](auto w) {
 			return max(S(t)(w) - UIC.k, 0);

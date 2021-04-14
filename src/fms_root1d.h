@@ -85,7 +85,7 @@ namespace fms::root1d {
 
 		explicit operator bool() const
 		{
-			return y1 != Y(0);
+			return !nearly_zero();
 		}
 		value_type operator*() const
 		{
