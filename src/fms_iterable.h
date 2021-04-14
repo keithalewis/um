@@ -9,15 +9,18 @@
 #include <iterator>
 #include <type_traits>
 
-namespace fms {
+namespace fms::iterable {
 
 	//!!! concept input_iterable, etc
 	template<class I>
-	concept iterable =  // input_iterable
+	concept input_iterable =  // input_iterable
 		std::is_base_of_v<std::input_iterator_tag, typename I::iterator_category> &&
 		requires (I i) {
-		//typename I::iterator_concept;
+		typename I::iterator_category;
+		typename I::difference_type;
 		typename I::value_type;
+		typename I::pointer;
+		typename I::reference;
 		{ !!i } -> std::same_as<bool>;
 		{  *i } -> std::convertible_to<typename I::value_type>; // remove_cv???
 		{ ++i } -> std::same_as<I&>;
@@ -28,20 +31,20 @@ namespace fms {
 	};
 
 	// All iterables begin alike...
-	template<iterable I>
+	template<input_iterable I>
 	inline I begin(I i)
 	{
 		return i;
 	}
 	// ...but each ends after its own fashion.
-	template<iterable I>
+	template<input_iterable I>
 	inline I end(I i)
 	{
 		return i.end();
 	}
 
 	// all iterable items are equal
-	template<iterable I, iterable J>
+	template<input_iterable I, input_iterable J>
 	inline constexpr bool equal(I i, J j)
 	{
 		while (i and j) {
@@ -53,14 +56,14 @@ namespace fms {
 	}
 
 	// return end or first item satisfying p
-	template<iterable I, class P>
+	template<input_iterable I, class P>
 	inline constexpr I upto(I i, const P& p)
 	{
 		return !i or p(i) ? i : upto(++i, p);
 	}
 
 	// return end or last item before p is satisfied
-	template<iterable I>
+	template<input_iterable I>
 	inline constexpr I back(I i)
 	{
 		while (I _i = i++) {
@@ -72,20 +75,20 @@ namespace fms {
 	}
 
 	// return end or first false item
-	template<iterable I>
+	template<input_iterable I>
 	inline constexpr I all(I i)
 	{
 		return upto(i, [](I i) { return !*i; });
 	}
 	// return end or first true item
-	template<iterable I>
+	template<input_iterable I>
 	inline constexpr I any(I i)
 	{
 		return upto(i, [](I i) { return *i; });
 	}
 
 	// filter on predicate p
-	template<iterable I, class P>
+	template<input_iterable I, class P>
 	class when {
 		I i;
 		const P& p;
@@ -142,7 +145,7 @@ namespace fms {
 	};
 
 	// stop when p is true
-	template<iterable I, class P>
+	template<input_iterable I, class P>
 	class until {
 		I i;
 		const P& p;
@@ -199,7 +202,7 @@ namespace fms {
 
 #ifdef _DEBUG
 
-	template<iterable I>
+	template<input_iterable I>
 	inline bool test_all(const I& is)
 	{
 		bool b = true; // all({}) = true
@@ -225,7 +228,7 @@ namespace fms {
 
 #endif // _DEBUG
 
-	template<iterable I>
+	template<input_iterable I>
 	inline constexpr size_t length(I i, size_t n = 0)
 	{
 		while (i++)
@@ -234,7 +237,7 @@ namespace fms {
 		return n;
 	}
 #ifdef _DEBUG
-	template<iterable I, iterable J>
+	template<input_iterable I, input_iterable J>
 	inline int test_length(I i, J j)
 	{
 		if (!i) {
@@ -246,7 +249,7 @@ namespace fms {
 		return 0;
 	}
 #endif // _DEBUG
-	template<iterable I, iterable J>
+	template<input_iterable I, input_iterable J>
 	inline J& copy(I i, J& j)
 	{
 		while (i and j) {
@@ -342,6 +345,7 @@ namespace fms {
 				assert(3 == *s++);
 				assert(5 == *s++);
 			}
+			/*
 			{
 				using std::chrono::year_month_day;
 				using std::chrono::months;
@@ -361,6 +365,7 @@ namespace fms {
 				assert((*s).month() == std::chrono::month(4));
 				assert((*s).day() == std::chrono::day(1));
 			}
+			*/
 			
 
 			return 0;
@@ -385,7 +390,6 @@ namespace fms {
 		T* t;
 	public:
 		using iterator_category = std::input_iterator_tag; //!!! random access
-		using value_type = T;
 		using difference_type = ptrdiff_t;
 		using value_type = T;
 		using pointer = T*;
@@ -472,7 +476,7 @@ namespace fms {
 #endif // _DEBUG
 	};
 
-	template<iterable I>
+	template<input_iterable I>
 	class take {
 		size_t n;
 		I i;
@@ -565,7 +569,7 @@ namespace fms {
 	#endif // _DEBUG
 	};
 
-	template<iterable I>
+	template<input_iterable I>
 	inline I drop(size_t n, I i)
 	{
 		while (n--)
@@ -575,7 +579,7 @@ namespace fms {
 	}
 
 	// keep track of iterable increments
-	template<iterable I>
+	template<input_iterable I>
 	class counted {
 		I i;
 		size_t n;
@@ -586,15 +590,19 @@ namespace fms {
 		using pointer = typename I::pointer;
 		using reference = typename I::reference;
 
-		counted(const I& i, size_t n = 0)
-			: i(i), n(n)
+		counted(I&& i, size_t n = 0)
+			: i(std::move(i)), n(n)
 		{ }
 		counted(const counted&) = default;
 		counted& operator=(const counted&) = default;
 		~counted()
 		{ }
 
-		const I& iterable() const
+		I& iter()
+		{
+			return i;
+		}
+		const I& iter() const
 		{
 			return i;
 		}
@@ -728,7 +736,7 @@ namespace fms {
 	}
 	#endif // _DEBUG
 
-	template<iterable I, iterable J>
+	template<input_iterable I, input_iterable J>
 	class pair {
 		I i;
 		J j;
@@ -782,7 +790,7 @@ namespace fms {
 		}
 	};
 
-	template<iterable I, class F>
+	template<input_iterable I, class F>
 	class apply {
 		I i;
 		const F& f;
@@ -841,6 +849,94 @@ namespace fms {
 				assert(0 == *a);
 				assert(1 == *++a);
 				assert(4 == *++a);
+			}
+
+			return 0;
+		}
+#endif // _DEBUG
+	};
+
+	// make iterable from container
+	template<class C>
+	class container {
+		C::iterator b, e;
+	public:
+		using iterator_category = typename C::iterator::iterator_category;
+		using difference_type = typename C::iterator::difference_type;
+		using value_type = typename C::iterator::value_type;
+		using pointer = typename C::iterator::pointer;
+		using reference = typename C::iterator::reference;
+
+		// user responsible for container lifetime
+		container(C& c)
+			: b(c.begin()), e(c.end())
+		{ }
+		container(const container&) = default;
+		container& operator=(const container&) = default;
+		~container()
+		{ }
+
+		bool operator==(const container& c) const
+		{
+			return equal(*this, c);
+		}
+
+		container begin() const
+		{
+			return *this;
+		}
+		container end() const
+		{
+			container c_{ *this };
+			c_.b = c_.end();
+
+			return c_;
+		}
+
+		explicit operator bool() const
+		{
+			return b != e;
+		}
+		value_type operator*() const
+		{
+			return *b;
+		}
+		reference operator*()
+		{
+			return *b;
+		}
+		container& operator++()
+		{
+			if (operator bool()) {
+				++b;
+			}
+
+			return *this;
+		}
+		container operator++(int)
+		{
+			auto c_{ *this };
+			operator++();
+
+			return c_;
+		}
+#ifdef _DEBUG
+		static int test()
+		{
+			{
+				C c = { 1,2,3 };
+				container i(c);
+				assert(i);
+				auto i2{ i };
+				assert(i2);
+				i = i2;
+				assert(i == i2);
+				assert(1 == *i);
+				++i;
+				assert(2 == *i);
+				assert(2 == *i++);
+				assert(3 == *i);
+				assert(!++i);
 			}
 
 			return 0;

@@ -26,13 +26,16 @@
     <ClInclude Include="..\fms_iterable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\distribution.h">
+    <ClInclude Include="..\fms_distribution.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\fms_pwflat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\fms_root1d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

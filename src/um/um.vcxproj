@@ -147,7 +147,8 @@
     <ClCompile Include="..\test.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\distribution.h" />
+    <ClInclude Include="..\fms.h" />
+    <ClInclude Include="..\fms_distribution.h" />
     <ClInclude Include="..\fms_pwflat.h" />
     <ClInclude Include="..\fms_iterable.h" />
     <ClInclude Include="..\fms_root1d.h" />

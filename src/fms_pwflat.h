@@ -1,7 +1,10 @@
 // fms_pwflat.cpp - piecewise flat curve
+#include <math.h>
 #include <algorithm>
 #include <limits>
 #include "fms_iterable.h"
+
+using namespace fms::iterable;
 
 namespace fms::pwflat {
 
@@ -9,7 +12,7 @@ namespace fms::pwflat {
 	inline constexpr T NaN() { return std::numeric_limits<T>::quiet_NaN(); }
 
 	// first pair [t,x] with t >= _t and advance t, x
-	template<iterable T, iterable X,
+	template<input_iterable T, input_iterable X,
 		class _T = typename T::value_type, class _X = typename X::value_type>
 	inline std::pair<_T,_X> valuate(T& t, X& x, const _T& _t, const _X& _x = NaN<_X>())
 	{
@@ -25,7 +28,7 @@ namespace fms::pwflat {
 	}
 	
 	// first pair [t,x] with t >= _t
-	template<iterable T, iterable X,
+	template<input_iterable T, input_iterable X,
 		class _T = typename T::value_type, class _X = typename X::value_type>
 	inline std::pair<_T, _X> value(const T& t, const X& x, const _T& _t, const _X& _x = NaN<_X>())
 	{
@@ -39,6 +42,7 @@ namespace fms::pwflat {
 	inline int test_value()
 	{
 		{
+
 			double t[] = { 1., 2., 3. };
 			double x[] = { .1, .2, .3 };
 
@@ -107,7 +111,7 @@ namespace fms::pwflat {
 #endif // _DEBUG
 
 	// integrate x(t) from t0 to _t and advance t, x
-	template<iterable T, iterable X,
+	template<input_iterable T, input_iterable X,
 		class _T = typename T::value_type, class _X = typename X::value_type>
 	inline _X integrate(T& t, X& x, const _T& _t, const _T& t0 = _T(0))
 	{
@@ -129,7 +133,7 @@ namespace fms::pwflat {
 
 		return I;
 	}
-	template<iterable T, iterable X,
+	template<input_iterable T, input_iterable X,
 		class _T = typename T::value_type, class _X = typename X::value_type>
 	inline _X integral(const T& t, const X& x, const _T& _t, const _T& t0 = _T(0))
 	{
@@ -140,7 +144,7 @@ namespace fms::pwflat {
 	}
 
 	// pv and discount to last cash flow
-	template<iterable T, iterable X,
+	template<input_iterable T, input_iterable X,
 		class _T = typename T::value_type, class _X = typename X::value_type>
 	std::pair<_X, _X> present_valuate(T& t, X& x, T& u, X& c, const _T& t0 = _T(0))
 	{
@@ -159,7 +163,7 @@ namespace fms::pwflat {
 
 		return std::pair(pv, D);
 	}
-	template<iterable T, iterable X,
+	template<input_iterable T, input_iterable X,
 		class _T = typename T::value_type, class _X = typename X::value_type>
 	std::pair<_X, _X> present_value(const T& t, const X& x, const T& u, const X& c, const _T& t0 = _T(0))
 	{
@@ -170,7 +174,7 @@ namespace fms::pwflat {
 	}
 
 	// f(t) = x[i], t[i-1] < t <= t[i]
-	template<iterable T, iterable X,
+	template<input_iterable T, input_iterable X,
 		class _T = typename T::value_type, class _X = typename X::value_type>
 	struct curve {
 		T t;
@@ -191,7 +195,10 @@ namespace fms::pwflat {
 		~curve()
 		{ }
 
-		auto operator<=>(const curve& f) const = default;
+		bool operator==(const curve& f) const
+		{
+			return ((isnan(_x) and isnan(f._x)) or _x == f._x) and t == f.t and x == f.x;
+		}
 
 		curve begin() const
 		{

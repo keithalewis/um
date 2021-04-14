@@ -92,7 +92,8 @@ _Prefer functions to objects._
 
 Functions have no side effects and only return a result.
 This enables compilers to generate efficient code since they have no side
-effects that might mutate data.  Functions, by definition, are composable
+effects that might mutate data.
+Functions, by definition, are composable
 and make refactoring simpler.
 You know exactly what a functions does by looking at the code.
 

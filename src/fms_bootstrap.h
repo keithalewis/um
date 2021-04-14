@@ -3,13 +3,15 @@
 #include "fms_iterable.h"
 #include "fms_pwflat.h"
 
+using namespace fms::iterable;
+
 namespace fms::bootstrap {
 
 	inline const char* next_doc = R"(
 Given a piecewise flat curve t, x find next point that reprices u, c.
 \(p = pv_0 + D_0 \sum c * exp(-f(u - u0))\).
 )";
-	template<iterable T, iterable X,
+	template<input_iterable T, input_iterable X,
 		class _T = typename T::value_type, class _X = typename X::value_type>
 	inline std::pair<_T, _X> next(T& t, X& x, T& u, X& c, const _X& _x, const _X& p = _X(0))
 	{

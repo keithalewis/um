@@ -32,23 +32,18 @@ namespace fms::root1d {
 		return std::fabs(diff) <= std::max(abs, rel * norm);
 	}
 	
-	template<fms::iterable I, class P> 
+	template<iterable::input_iterable I, class P> 
 	inline I solve(I i, const P& p)
 	{
 		return upto(i, p);
 	}
 
-	// until(i, [](auto i) {return relabs(*i) < eps;});
-	// secant s(...);
-	// auto t = relabs(s) < eps;
-	// [x,y] = *any(t);
-
 	template<class X, class Y>
 	struct secant {
-		std::reference_wrapper<const std::function<Y(X)>> f;
+		const std::function<Y(X)>& f;
 		X x0, x1;
 		Y y0, y1;
-		decltype(y0 / x0) m_, m; // last and current secant slope
+		decltype(y0 / x0) m, m_; // last and current secant slope
 		X rel, abs;
 	public:
 		using iterator_category = std::input_iterator_tag;
@@ -57,9 +52,10 @@ namespace fms::root1d {
 		using pointer = value_type*;
 		using reference = value_type&;
 
-		secant(const std::function<Y(X)>& f, const X& x0, const X& x1,
+		template<class F>
+		secant(F&& f, const X& x0, const X& x1,
 			const X& rel = 8 * epsilon<X>(), const X& abs = minimum<X>())
-				: f(std::cref(f)), x0(x0), x1(x1), y0(f(x0)), y1(f(x1)), 
+				: f(std::move(f)), x0(x0), x1(x1), y0(f(x0)), y1(f(x1)), 
 					m((y1 - y0)/(x1 - x0)), m_(0), rel(rel), abs(abs)
 		{ }
 		secant(const secant&) = default;
@@ -69,7 +65,7 @@ namespace fms::root1d {
 		
 		bool operator==(const secant& s) const
 		{
-			return /*&f == &s.f and*/ x0 == s.x0 and x1 == s.x1 
+			return &f == &s.f and x0 == s.x0 and x1 == s.x1 
 				and y0 == s.y0 and y1 == s.y1
 				and m == s.m and m_ == s.m_
 				and rel == s.rel and abs == s.abs;
@@ -142,18 +138,21 @@ namespace fms::root1d {
 		static int test()
 		{
 			{
-				//secant s(cos, ...) does not work
+				//std::function<double(double)> g(+cos);
+				//secant s3(cos, 1.4, 1.5); // does not work
 				std::function<double(double)> f = [](double x) { return cos(x); };
 				secant s(f , 3. / 2, 4. / 2);
 				assert(s);
-				secant s2{ s };
-				assert(s2);
-				assert(s == s2);
-				s = s2;
-				assert(!(s != s2));
+				auto s2{ s };
+				auto p = &s.f;
+				auto p2 = &s2.f;
+				assert (p == p2);
+				assert(s2 == s);
 
 				const auto& [x, y] = s.solve();
 				assert(nearly_equal(x, M_PI_2));
+				//const auto& [u, v] = s2.solve();
+				//assert(nearly_equal(u, M_PI_2));
 			}
 			{
 				std::function<Y(X)> f = [](X x) { return x*x - 2.; };
@@ -178,7 +177,7 @@ namespace fms::root1d {
 			{
 				std::function<Y(X)> f = [](X x) { return x * x - 2; };
 				auto s = counted(secant(f, 1, 2));
-				while (!s.iterable().nearly_zero()) {
+				while (!s.iter().nearly_zero()) {
 					++s;
 				}
 				assert(8 == s.count());
