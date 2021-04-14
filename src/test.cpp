@@ -44,12 +44,11 @@ int test_length0 = test_length(take(2, sequence<int>()), take(3, sequence<int>()
 int test_length1 = test_length(take(0, sequence<int>()), take(3, sequence<int>()));
 int test_length2 = test_length(take(0, sequence<int>()), take(0, sequence<int>()));
 
-int test_value = pwflat::test_value();
-//int test_root1d = secant<double,double>::test();
+int test_apply_ = test_apply();
 
-//int test_apply = apply<std::function<int(int)>,sequence<int>>::test();
 int test_root1d = root1d::secant<double,double>::test();
 
+int test_value = pwflat::test_value();
 int test_pwflat = pwflat::test();
 
 int test_container = container<std::vector<int>>::test();

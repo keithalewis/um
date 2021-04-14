@@ -11,24 +11,29 @@
 
 namespace fms::iterable {
 
-	//!!! concept input_iterable, etc
+	template<class T>
+	concept pointer_iterable = std::input_iterator<T*>;
+
+	//!!! concept input_iterable, etc 
+	// pointer_iterable has unsafe operator bool() always returning true
 	template<class I>
 	concept input_iterable =  // input_iterable
 		std::is_base_of_v<std::input_iterator_tag, typename I::iterator_category> &&
+		// ??? std::derived_from<std::iterator_traits<I>, std::input_iterator_tag> &&
 		requires (I i) {
-		typename I::iterator_category;
-		typename I::difference_type;
-		typename I::value_type;
-		typename I::pointer;
-		typename I::reference;
-		{ !!i } -> std::same_as<bool>;
-		{  *i } -> std::convertible_to<typename I::value_type>; // remove_cv???
-		{ ++i } -> std::same_as<I&>;
-		{ i++ } -> std::same_as<I>;
-		{ i.operator==(i) } -> std::same_as<bool>;
-		{ i.begin() } -> std::same_as<I>;
-		{ i.end() } -> std::same_as<I>;
-	};
+			typename I::iterator_category;
+			typename I::difference_type;
+			typename I::value_type;
+			typename I::pointer;
+			typename I::reference;
+			{ !!i } -> std::same_as<bool>; // operator bool()
+			{  *i } -> std::convertible_to<typename I::value_type>; // remove_cv???
+			{ ++i } -> std::same_as<I&>;
+			{ i++ } -> std::same_as<I>;
+			{ i.operator==(i) } -> std::same_as<bool>;
+			{ i.begin() } -> std::same_as<I>;
+			{ i.end() } -> std::same_as<I>;
+		};
 
 	// All iterables begin alike...
 	template<input_iterable I>
@@ -42,6 +47,8 @@ namespace fms::iterable {
 	{
 		return i.end();
 	}
+
+	// iterables are lightweight and often passed by value
 
 	// all iterable items are equal
 	template<input_iterable I, input_iterable J>
@@ -62,7 +69,7 @@ namespace fms::iterable {
 		return !i or p(i) ? i : upto(++i, p);
 	}
 
-	// return end or last item before p is satisfied
+	// return end or last item before end
 	template<input_iterable I>
 	inline constexpr I back(I i)
 	{
@@ -100,10 +107,8 @@ namespace fms::iterable {
 		using reference = typename I::reference;
 
 		when(const I& i, const P&p)
-			: i(i), p(p)
-		{
-			this->i = upto(this->i, p);
-		}
+			: i(upto(i, p)), p(p)
+		{ }
 
 		bool operator==(const when& w) const
 		{
@@ -288,7 +293,7 @@ namespace fms::iterable {
 		}
 		sequence end() const
 		{
-			return sequence(t, -dt); // ??? std::numeric_limits<T>::max()
+			return sequence(((dt > 0) - (dt < 0))*std::numeric_limits<T>::max(), dt);
 		}
 
 		explicit operator bool() const
@@ -792,31 +797,31 @@ namespace fms::iterable {
 
 	template<input_iterable I, class F>
 	class apply {
-		I i;
 		const F& f;
+		I i;
 	public:
 		using iterator_category = typename I::iterator_category;
 		using difference_type = typename I::difference_type;
-		using value_type = std::invoke_result_t<F,typename I::value_type>;
+		using value_type = std::invoke_result_t<F, typename I::value_type>;
 		using pointer = value_type*;
 		using reference = value_type&;
 
-		apply(const I& i, const F& f)
-			: i(i), f(f)
+		apply(const F& f, const I& i)
+			: f(f), i(i)
 		{ }
 
 		bool operator==(const apply& a) const
 		{
-			return i == a.i and &f == &a.f;
+			return &f == &a.f and i == a.i;
 		}
 
 		apply begin() const
 		{
-			return apply(i, f);
+			return apply(f, i);
 		}
 		apply end() const
 		{
-			return apply(i.end(), f);
+			return apply(f, i.end());
 		}
 
 		explicit operator bool() const
@@ -833,28 +838,31 @@ namespace fms::iterable {
 
 			return *this;
 		}
-		apply& operator++(int)
+		apply operator++(int)
 		{
 			apply a_(f, i);
 			operator++();
 
 			return a_;
 		}
-#ifdef _DEBUG
-		static int test()
-		{
-			{
-				apply a([](auto x) { return x*x; }, sequence<int>());
-				assert(a);
-				assert(0 == *a);
-				assert(1 == *++a);
-				assert(4 == *++a);
-			}
-
-			return 0;
-		}
-#endif // _DEBUG
 	};
+#ifdef _DEBUG
+	inline int test_apply()
+	{
+		{
+			apply a([](int i) { return i * i; }, sequence<int>(-2));
+			assert(a);
+			assert(4 == *a);
+			assert(1 == *++a);
+			assert(0 == *++a);
+			assert(1 == *++a);
+		}
+
+		return 0;
+	}
+#endif // _DEBUG
+
+	//template<input_iterable I, class F>
 
 	// make iterable from container
 	template<class C>

@@ -100,7 +100,8 @@ namespace fms::pwflat {
 			auto f = [](double t) { return ceil(t) * .1; };
 			auto t = sequence(0., 1.);
 			auto x = sequence(0., .1);
-			for (const double& _t : until(sequence(-1., .1), [](auto i) { return i > 3; })) {
+			auto ts = until(sequence(-1., .1), [](auto i) { return i > 3; });
+			for (const double& _t : ts) {
 				const auto& [t_, x_] = valuate(t, x, _t);
 				assert(f(t_) == x_);
 			}

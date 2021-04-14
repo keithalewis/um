@@ -24,3 +24,8 @@
 /01-intro.pdf
 /01-intro.html
 *.new
+/polyfin.html
+/.polyfin.md.swp
+*.bak
+*.pdf
+/src/test

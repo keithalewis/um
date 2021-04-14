@@ -22,8 +22,8 @@ students who get hired.
 
 The PolyFin core library is written using C++20 and includes language bindings for
 Python using [CFFI](https://cffi.readthedocs.io/en/latest/), [Cython](https://cython.org/),
-.Net using [C++/CLI](https://docs.microsoft.com/en-us/cpp/dotnet/dotnet-programming-with-cpp-cli-visual-cpp),
 [SIP](https://www.riverbankcomputing.com/software/sip/intro),
+.Net using [C++/CLI](https://docs.microsoft.com/en-us/cpp/dotnet/dotnet-programming-with-cpp-cli-visual-cpp),
 and Javascript using [Emscripten](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Emscripten).
 It uses functions instead of objects when feasible. 
 Functions have no side effects and only return a result. 
