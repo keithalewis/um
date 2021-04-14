@@ -5,14 +5,12 @@ institution: KALX, LLC
 email: kal@kalx.net
 classoption: fleqn
 fleqn: true
-abstract: Software implementation of financial mathematics
+abstract: Software implementation of financial mathematics.
 ...
 
 \newcommand\RR{\bm{R}}
 \newcommand\NN{\bm{N}}
 \newcommand{\Var}{\operatorname{Var}}
-
-# PolyFin 
 
 An adaptable toolkit for financial modeling.
 
@@ -22,16 +20,16 @@ a computer to produce numbers they find useful for running their business.
 Students who can demonstrate they have the skills to do this are
 students who get hired.
 
-The core library is written using C++20 and includes language bindings
+The PolyFin core library is written using C++20 and includes language bindings for
 Python using [CFFI](https://cffi.readthedocs.io/en/latest/), [Cython](https://cython.org/),
 .Net using [C++/CLI](https://docs.microsoft.com/en-us/cpp/dotnet/dotnet-programming-with-cpp-cli-visual-cpp),
-[SIP](https://www.riverbankcomputing.com/software/sip/intro),  
+[SIP](https://www.riverbankcomputing.com/software/sip/intro),
 and Javascript using [Emscripten](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Emscripten).
 It uses functions instead of objects when feasible. 
 Functions have no side effects and only return a result. 
 This enables compilers to generate efficient code since they have no
 side effects.  Functions, by definition, are
-composable and make refactoring simpler.
+composable and make it easier to integrate PolyFin into other systems.
 
 PolyFin also uses stream oriented interfaces that avoid memory allocation.
 Streams produce data on demand and don't care where it comes from.
@@ -54,9 +52,9 @@ an analog of price computed using a model.
 Distributions. Cumulative distribution functions of random variables
 and derivatives required for option valuation and greeks.
 
-Root finding. 1d Hewlett-Packer/Kahane Solver. It just works.
+Root finding. 1d Hewlett-Packard/Kahane Solver. It just works.
 
-AD. Automatic differentiation using [\epsilon](https://github.com/keithalewis/epsilon).
+Automatic differentiation. Use [\epsilon](https://github.com/keithalewis/epsilon).
 Also useful for Machine Learning.
 
 European option (forward/Black) valuation. $F = f \exp(s X - κ(s))$ parameterizes all positive payoffs
@@ -78,42 +76,51 @@ where $f(s)$ is the continuously compounded forward rate at $s$.
 The _spot rate_ $r$ is defined by $D(t) = \exp(-t r(t))$ so
 $r(t) = (1/t)\int_0^t f(s)\,ds$ is the average forward rate.
 
-European option valuation. 
-The (spot) value of an European option paying $ν(F)$ at expiration $t$ is $v = D(t)E[ν(F)]$.
+European option valuation. Cost of carry: spot $S_t = F_tD(t)$.
+The (spot) value of an European option paying $ν(S_t)$ at expiration $t$ is $v = D(t)E[ν(F_t/D(t))]$.
 Greeks can be evaluated using the chain rule.
 
-Bootstrap. Use piece-wise flat forward curve.
+Bootstrap. Use a piece-wise flat forward curve.
 Bond yield is a special case for a single fixed income instrument using a constant forward.
 Interpolate by adding synthetic instruments that make sense to traders, not by using splines.
 
-Stochastic rates. Equity volatility swamps out interest rate volatility, but the
-stochastic forward rate determines the value of every fixed income instrument.
+Stochastic rates. Deterministic rates can be used for equities since
+equity volatility swamps out interest rate volatility.
+The stochastic forward rate determines the value of every fixed income instrument.
 
 Deflator. Reciprocal of money market account where one unit is reinvested at
 the prevailing repo rate $f_s$: $D_t = \exp(-\int_0^t f_s\,ds)$.
 
 FTAP: Every arbitrage-free model is parameterized by a vector-valued martingale
-and a deflator.
+$M_t$ and a deflator where deflated price are
+$$
+	X_t D_t = M_t - \sum_{s\le t} C_s D_s.
+$$
+Prices $X_t$ and cash flows $C_t$ satisfy
+$$
+	X_t D_t = E_t[X_u D_u + \sum_{t < s \le u} C_s D_s].
+$$
 
-Zero. The price at time $t$ of a zero coupon bond maturing at $u$ is
+Zero Coupon Bond. The price at time $t$ of a zero coupon bond maturing at $u$ is
 $$
 	D_t(u) = E_t[D_u]/D_t = E_t[e^{-\int_t^u f(s)\,ds}] = e^{-\int_t^u f_t(s)\,ds},
 $$
 where $f_t$ is the forward curve at time $t$.
 
-Valuation. A derivative is a contract paying $A_j$ at $τ_j$.
+Valuation. A derivative is a contract paying $A_j$ at times $τ_j$.
 In an arbitrage-free model its value is $V_t = E_t[\sum_{τ_j>t} A_j D_{τ_j}]/D_t$.
 
-Binomial Model. It is Brownian motion in the limit. The increase in computing power
-makes it practical to use these days.
+Binomial Model. Not just for MBA's anymore. It is Brownian motion in
+the limit. The increase in computing power makes it practical to use.
 
-Trinomial Model. More efficient than binomial. Use the same valuation code.
+Trinomial Model. More efficient than binomial. Uses the same valuation code.
 
-Fixed Income. Daycount fractions. Valuation versus settlement date.
-Specify contacts generically (like ISDA) and use valuation date and price/par coupon
-to fix cash flows.
+Fixed Income. Instruments paying fixed cash flows.  Valuation versus settlement date.
+Daycount fractions.  Specify contacts generically (ISDA agreements).
+Valuation date and price/par coupon fix cash flows when trade occurs.
 
-Risky Fixed Income. Default time and recovery of bond issuer determine dynamics.
+Risky Fixed Income. The default time of and recovery from bond issuer determine dynamics.
+Credit spread incorporates both in a single number.
 
 LIBOR Market Model. Convexity adjustment for forwards versus futures.
 Parameterized by futures, at-the-money caplets, and
@@ -124,6 +131,8 @@ Variance Swaps. Model independent valuation. Cubic term explains P&L, not delta 
 ## Design
 
 Streams, random variables and conditional expection, coroutines...
+
+Generic framework for valuing any instrument.
 
 ## Sample Usage
 
@@ -178,11 +187,12 @@ Streams, random variables and conditional expection, coroutines...
 	double v = value(UIC, S, B);
 
 	// UIC implementation
+	// first time barrier is exceeded
 	auto tau = take(1, max(S(B.times())) > UIC.h);
 	// cash flows are functions T -> Omega -> R
 	auto A = [S,UIC](auto t) {
 		return [S,UIC](auto w) {
-			return max(S(t)(w) - UIC.k, 0) * (max(S)(t)(w) > UIC.h);
+			return max(S(t)(w) - UIC.k, 0);
 		};
 	};
 
