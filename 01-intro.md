@@ -39,8 +39,8 @@ the amount of a security held and are determined by the issuer of the instrument
 Holdings are exchanged by _trades_ between a buyer and a seller
 and accumulate to a position in instruments for the legal entities involved.
 
-A _derivative_ is a contract between a buyer and a seller for the
-exchange of future cash flows. As with any contract, they are subject
+_Derivatives_ are contract between a buyer and a seller for the
+exchange of future cash flows. As with any contract they are subject
 to the laws and regulations of the governing country.
 Derivatives have been used throught human history to enable humans to
 benefit from what Adam Smith called 'division of labor.'
@@ -49,6 +49,7 @@ they could make a benefical exchange. The introduction of _currency_
 streamlined such trades.  Derivatives involve promises of
 future exchanges. If Korg gives Grok a bear skin today for a quiver of
 arrows at the next full moon can he trust Grok to deliver?
+Will the tribe shame Grok into delivering on his promise?
 _Risk Management_ was a concern even before the first derivative transaction.
 
 ## Instrument
