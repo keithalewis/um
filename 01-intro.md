@@ -10,9 +10,9 @@ fleqn: true
 \newcommand\st{\mid}
 \newcommand{\Var}{\operatorname{Var}}
 
-Participants (_entities_) in financial markets hold _amounts_ of _securities_.
+Participants (legal _entities_) in financial markets hold _amounts_ of _securities_.
 _Securities_ are tangible assets such as stocks, bonds, currencies, and commodities.
-Introduce derivatives later.]
+[Introduce derivatives later.]
 Securities _trade_ in specified amounts: shares, notional, denominations, and 
 physical quantities, respectively.
 _Buyers_ decide when and how much of each security to trade
