@@ -10,41 +10,50 @@ fleqn: true
 \newcommand\st{\mid}
 \newcommand{\Var}{\operatorname{Var}}
 
-Participants in financial markets trade instruments such as
-stocks, bonds, futures, currencies, and commodities.
-Buyers decide when and how much of each instrument to exchange with sellers
-based on the price offered, among other considerations.
-Trades occur over-the-counter or on exchanges.
+Participants (_entities_) in financial markets hold _amounts_ of _securities_.
+_Securities_ are tangible assets such as stocks, bonds, currencies, and commodities.
+Introduce derivatives later.]
+Securities _trade_ in specified amounts: shares, notional, denominations, and 
+physical quantities, respectively.
+_Buyers_ decide when and how much of each security to trade
+based on the price offered by _sellers_, among other considerations.
+Trades occur _over-the-counter_ or on _exchanges_.
 
-Over-the-counter refers to trades involving only two participants,
-the _buyer_ and the _seller_. The credit quality of the
-participants is a factor that must be considered.
-
+Over-the-counter refers to trades between a buyer and a seller.
 Exchanges have liquidity providers who _make a market_
-for instruments. They quote prices for instruments to customers
-at which they can buy or sell given amounts.
-Exchanges typically do not hold instruments; they facilitate
-transactions between buyers and sellers extract a fraction of
-the amounts exchanged.
+for securities. They quote _prices_ to customers
+at which they can buy or sell given _amounts_.
+Exchanges often do not hold instruments; they intermediate
+between buyers and sellers and extract a fraction of the amounts exchanged
+for the service they provide.
+_Brokers-Dealers_ also facilitate transactions between market participants.
+They hold inventories of securities that are subject to
+market price movements so they are subject to more risk than exchanges.
+[No exchange has every gone bankrupt. Global Crossing?]
 
-Brokers/Dealers also facilitate transactions between market participants.
-They often hold inventories of instruments that are subject to
-market price movements.
-
-Holding an amount of an instrument entitles the owner to all cash flows associated with the instrument:
+Holding an amount of an instrument entitles the owner to all _cash flows_ associated with the instrument:
 dividends, coupons, margin adjustments, and storage costs for
 stocks, bonds, futures, and commodities respectively.
 Currencies do not have cash flows. Cash flows are proportional to
-the amount of an instrument held.
-
-Holdings are exchanged by trades between a buyer and a seller
+the amount of a security held and are determined by the issuer of the instrument.
+Holdings are exchanged by _trades_ between a buyer and a seller
 and accumulate to a position in instruments for the legal entities involved.
-A legal entity is an individual or corporation
 
 A _derivative_ is a contract between a buyer and a seller for the
-exchange of future cash flows.
+exchange of future cash flows. As with any contract, they are subject
+to the laws and regulations of the governing country.
+Derivatives have been used throught human history to enable humans to
+benefit from what Adam Smith called 'division of labor.'
+If Korg was good at catching bears but Grok was better at making arrows
+they could make a benefical exchange. The introduction of _currency_
+streamlined such trades.  Derivatives involve promises of
+future exchanges. If Korg gives Grok a bear skin today for a quiver of
+arrows at the next full moon can he trust Grok to deliver?
+_Risk Management_ was a concern even before the first derivative transaction.
 
 ## Instrument
+
+An _instrument_ is either a security or a derivative.
 
 Security - tangible asset.
 

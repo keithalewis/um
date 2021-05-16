@@ -199,3 +199,8 @@ Generic framework for valuing any instrument.
 	};
 
 ```
+
+## Remarks
+
+State of the art practices.
+  - Build system, continuous integration, code coverage, 

@@ -6,6 +6,7 @@
 #endif
 #include <compare>
 #include <concepts>
+#include <functional>
 #include <iterator>
 #include <type_traits>
 
@@ -49,15 +50,25 @@ namespace fms::iterable {
 	}
 
 	// iterables are lightweight and often passed by value
+	
+	// return end or last item before end
+	template<input_iterable I>
+	inline constexpr I back(I i)
+	{
+		while (I _i = i++)
+			if (!i)
+				return _i;
+
+		return i;
+	}
 
 	// all iterable items are equal
 	template<input_iterable I, input_iterable J>
 	inline constexpr bool equal(I i, J j)
 	{
-		while (i and j) {
+		while (i and j)
 			if (*i++ != *j++)
 				return false;
-		}
 
 		return !i and !j;
 	}
@@ -67,18 +78,6 @@ namespace fms::iterable {
 	inline constexpr I upto(I i, const P& p)
 	{
 		return !i or p(i) ? i : upto(++i, p);
-	}
-
-	// return end or last item before end
-	template<input_iterable I>
-	inline constexpr I back(I i)
-	{
-		while (I _i = i++) {
-			if (!i)
-				return _i;
-		}
-
-		return i;
 	}
 
 	// return end or first false item
@@ -795,14 +794,15 @@ namespace fms::iterable {
 		}
 	};
 
-	template<input_iterable I, class F>
+	template<class F, input_iterable I,
+		class X = typename I::value_type, class Y = std::invoke_result_t<F, X>>
 	class apply {
 		const F& f;
 		I i;
 	public:
 		using iterator_category = typename I::iterator_category;
 		using difference_type = typename I::difference_type;
-		using value_type = std::invoke_result_t<F, typename I::value_type>;
+		using value_type = Y;
 		using pointer = value_type*;
 		using reference = value_type&;
 
@@ -857,12 +857,71 @@ namespace fms::iterable {
 			assert(0 == *++a);
 			assert(1 == *++a);
 		}
+		{
+			apply a(std::negate<int>{}, sequence<int>(-2));
+			assert(2 == *a);
+			assert(1 == *++a);
+			assert(0 == *++a);
+			assert(-1 == *++a);
+		}
 
 		return 0;
 	}
 #endif // _DEBUG
 
-	//template<input_iterable I, class F>
+	template<class F, input_iterable I,
+		class T = typename I::value_type>
+	class fold {
+		const F& f;
+		I i;
+		T t;
+	public:
+		using iterator_category = typename I::iterator_category;
+		using difference_type = typename I::difference_type;
+		using value_type = T;
+		using pointer = value_type*;
+		using reference = value_type&;
+
+		fold(const F& f, const I& i, const T& t0)
+			: f(f), i(i), t(t0)
+		{ }
+
+		bool operator==(const fold& a) const
+		{
+			return &f == &a.f and i == a.i and t == a.t;
+		}
+
+		fold begin() const
+		{
+			return fold(f, i, t);
+		}
+		fold end() const
+		{
+			return fold(f, i.end(), t);
+		}
+
+		explicit operator bool() const
+		{
+			return !!i;
+		}
+		auto operator*() const
+		{
+			return t;
+		}
+		fold& operator++()
+		{
+			++i;
+
+			return *this;
+		}
+		fold operator++(int)
+		{
+			fold a_(f, i, t);
+			operator++();
+
+			return a_;
+		}
+	};
 
 	// make iterable from container
 	template<class C>
@@ -952,4 +1011,4 @@ namespace fms::iterable {
 #endif // _DEBUG
 	};
 
-} // namespace polyfin
+} // namespace fms
