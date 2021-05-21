@@ -2,7 +2,7 @@
 
 https://www.investopedia.com/terms/b/business-valuation.asp
 
-We consider _accounting_ from a view toward
+Let's consider _accounting_ from a view toward
 [valuing](https://www.investopedia.com/terms/b/business-valuation.asp)
 a company. A wholistic approach would consider societal issues such as
 job creation, environmental impact, and quality of life, but we only
